@@ -1,0 +1,262 @@
+<?xml version="1.0" encoding="utf-8"?>
+<yandexsearch version="1.0">
+<request>
+<query>пагода в маскве</query>
+<page>0</page>
+<sortby order="descending" priority="no">rlv</sortby>
+<maxpassages>3</maxpassages>
+<groupings>
+<groupby attr="" mode="flat" groups-on-page="10" docs-in-group="1" curcateg="-1"/>
+</groupings>
+</request>
+<response date="20260611T103855">
+<reqid>1781174335162556-10890297373179997892-balancer-l7leveler-kubr-yp-vla-224-BAL</reqid>
+<found priority="phrase">1087017</found>
+<found priority="strict">1087017</found>
+<found priority="all">1087017</found>
+<found-human>Нашёлся 1 млн ответов</found-human>
+<reask>
+<rule>Misspell</rule>
+<source-text>п<hlword>а</hlword>года в м<hlword>а</hlword>скве</source-text>
+<text-to-show/>
+<text>погода в москве</text>
+</reask>
+<is-local>no</is-local>
+<results>
+<grouping attr="" mode="flat" groups-on-page="10" docs-in-group="1" curcateg="-1">
+<page first="1" last="10">0</page>
+<group>
+<doccount>1</doccount>
+<relevance priority="all"/>
+<doc id="ZDB5046D21E78590D">
+<relevance priority="all"/>
+<saved-copy-url>https://yandexwebcache.net/yandbtm?fmode=inject&amp;tm=1781174335&amp;tld=ru&amp;lang=ru&amp;la=1780803584&amp;text=%D0%BF%D0%BE%D0%B3%D0%BE%D0%B4%D0%B0+%D0%B2+%D0%BC%D0%BE%D1%81%D0%BA%D0%B2%D0%B5&amp;url=https%3A//yandex.ru/pogoda/ru/moscow&amp;l10n=ru&amp;mime=html&amp;sign=598dda9b10ba90d19541ffcd7c557f60&amp;keyno=0</saved-copy-url>
+<url>https://yandex.ru/pogoda/ru/moscow</url>
+<domain>yandex.ru</domain>
+<title><hlword>Погода</hlword> <hlword>в</hlword> <hlword>Москве</hlword> — Прогноз <hlword>погоды</hlword> <hlword>в</hlword> <hlword>Москве</hlword>, Россия</title>
+<modtime>20101214T161550</modtime>
+<size>4912</size>
+<charset>utf-8</charset>
+<mime-type>text/html</mime-type>
+<passages>
+<passage><hlword>Москва</hlword>, <hlword>погода</hlword> сейчас: Ясно.‌ Сегодня осадков не ожидается, Температура воздуха +17°, ощущается как +15°. Скорость ветра 1,1 м/с, юго-восточный.</passage>
+</passages>
+<properties>
+<_PassagesType>0</_PassagesType>
+<lang>ru</lang>
+</properties>
+</doc>
+</group>
+<group>
+<doccount>1</doccount>
+<relevance priority="all"/>
+<doc id="Z95B0C4258B2C0169">
+<relevance priority="all"/>
+<saved-copy-url>https://yandexwebcache.net/yandbtm?fmode=inject&amp;tm=1781174335&amp;tld=ru&amp;lang=ru&amp;la=1780804352&amp;text=%D0%BF%D0%BE%D0%B3%D0%BE%D0%B4%D0%B0+%D0%B2+%D0%BC%D0%BE%D1%81%D0%BA%D0%B2%D0%B5&amp;url=https%3A//www.gismeteo.ru/weather-moscow-4368/now/&amp;l10n=ru&amp;mime=html&amp;sign=b348317185810aaea86f83595cf48fe1&amp;keyno=0</saved-copy-url>
+<url>https://www.gismeteo.ru/weather-moscow-4368/now/</url>
+<domain>www.gismeteo.ru</domain>
+<title>GISMETEO: <hlword>Погода</hlword> <hlword>в</hlword> <hlword>Москве</hlword> сейчас, фактическая <hlword>погода</hlword>...</title>
+<modtime>20150424T175952</modtime>
+<size>705</size>
+<charset>utf-8</charset>
+<mime-type>text/html</mime-type>
+<passages>
+<passage>Россия / <hlword>Москва</hlword> (город федерального значения). <hlword>Погода</hlword> <hlword>в</hlword> <hlword>Москве</hlword> сейчас.</passage>
+</passages>
+<properties>
+<_PassagesType>0</_PassagesType>
+<lang>ru</lang>
+</properties>
+</doc>
+</group>
+<group>
+<doccount>1</doccount>
+<relevance priority="all"/>
+<doc id="Z122B32EA3559D66C">
+<relevance priority="all"/>
+<saved-copy-url>https://yandexwebcache.net/yandbtm?fmode=inject&amp;tm=1781174335&amp;tld=ru&amp;lang=ru&amp;la=1780804736&amp;text=%D0%BF%D0%BE%D0%B3%D0%BE%D0%B4%D0%B0+%D0%B2+%D0%BC%D0%BE%D1%81%D0%BA%D0%B2%D0%B5&amp;url=https%3A//pogoda.mail.ru/prognoz/moskva/14dney/&amp;l10n=ru&amp;mime=html&amp;sign=f96c3d9d7032650399482aeb39feb917&amp;keyno=0</saved-copy-url>
+<url>https://pogoda.mail.ru/prognoz/moskva/14dney/</url>
+<domain>pogoda.mail.ru</domain>
+<title><hlword>Погода</hlword> <hlword>в</hlword> <hlword>Москве</hlword> на 14 дней - подробный прогноз на... - <hlword>Погода</hlword> Mail</title>
+<modtime>20141209T163540</modtime>
+<size>4036</size>
+<charset>utf-8</charset>
+<mime-type>text/html</mime-type>
+<passages>
+<passage>Подробно о <hlword>погоде</hlword> на 14 дней <hlword>в</hlword> <hlword>Москве</hlword> и других городах России и мира. Мы покажем, как <hlword>в</hlword> <hlword>Москве</hlword> будут изменяться температура воздуха, облачность, осадки, давление, влажность, а также проинформируем вас о времени восхода и захода Солнца и фазах Луны.</passage>
+</passages>
+<properties>
+<_PassagesType>0</_PassagesType>
+<lang>ru</lang>
+</properties>
+</doc>
+</group>
+<group>
+<doccount>1</doccount>
+<relevance priority="all"/>
+<doc id="Z94E3A0FFE3DF3E2A">
+<relevance priority="all"/>
+<saved-copy-url>https://yandexwebcache.net/yandbtm?fmode=inject&amp;tm=1781174335&amp;tld=ru&amp;lang=ru&amp;la=1781072640&amp;text=%D0%BF%D0%BE%D0%B3%D0%BE%D0%B4%D0%B0+%D0%B2+%D0%BC%D0%BE%D1%81%D0%BA%D0%B2%D0%B5&amp;url=https%3A//world-weather.ru/pogoda/russia/moscow/7days/&amp;l10n=ru&amp;mime=html&amp;sign=e9e056003af45b2c7c745ab02e0f9930&amp;keyno=0</saved-copy-url>
+<url>https://world-weather.ru/pogoda/russia/moscow/7days/</url>
+<domain>world-weather.ru</domain>
+<title><hlword>Погода</hlword> <hlword>в</hlword> <hlword>Москве</hlword> на неделю (7 дней) – подробный прогноз...</title>
+<modtime>20140521T121023</modtime>
+<size>1003</size>
+<charset>utf-8</charset>
+<mime-type>text/html</mime-type>
+<passages>
+<passage>Подробный прогноз <hlword>погоды</hlword> <hlword>в</hlword> <hlword>Москве</hlword> на неделю. Температура воздуха, скорость ветра, влажность и давление.</passage>
+</passages>
+<properties>
+<_PassagesType>0</_PassagesType>
+<lang>ru</lang>
+</properties>
+</doc>
+</group>
+<group>
+<doccount>1</doccount>
+<relevance priority="all"/>
+<doc id="ZC072D7BE856660F3">
+<relevance priority="all"/>
+<saved-copy-url>https://yandexwebcache.net/yandbtm?fmode=inject&amp;tm=1781174335&amp;tld=ru&amp;lang=ru&amp;la=1781072384&amp;text=%D0%BF%D0%BE%D0%B3%D0%BE%D0%B4%D0%B0+%D0%B2+%D0%BC%D0%BE%D1%81%D0%BA%D0%B2%D0%B5&amp;url=https%3A//pogoda7.ru/prognoz/gorod134242-Russia-g_Moskva-Moskva/14days/full&amp;l10n=ru&amp;mime=html&amp;sign=73fee32f8ed0d8ab6c01c6d85e22cd5a&amp;keyno=0</saved-copy-url>
+<url>https://pogoda7.ru/prognoz/gorod134242-Russia-g_Moskva-Moskva/14days/full</url>
+<domain>pogoda7.ru</domain>
+<title>Точная <hlword>погода</hlword> <hlword>в</hlword> <hlword>Москве</hlword> на 14 дней подробно (г. <hlword>Москва</hlword>, Россия)...</title>
+<modtime>20151129T084945</modtime>
+<size>2958</size>
+<charset>utf-8</charset>
+<mime-type>text/html</mime-type>
+<passages>
+<passage>Точный подробный прогноз <hlword>погоды</hlword> на 14 дней (2 недели) <hlword>в</hlword> <hlword>Москве</hlword>, г. <hlword>Москва</hlword>, Россия. Метеоданные о температуре, осадках, ветре, давлении, влажности на две недели.</passage>
+</passages>
+<properties>
+<_PassagesType>0</_PassagesType>
+<lang>ru</lang>
+</properties>
+</doc>
+</group>
+<group>
+<doccount>1</doccount>
+<relevance priority="all"/>
+<doc id="ZD39638E5B40CF9B9">
+<relevance priority="all"/>
+<saved-copy-url>https://yandexwebcache.net/yandbtm?fmode=inject&amp;tm=1781174335&amp;tld=ru&amp;lang=ru&amp;la=1781139968&amp;text=%D0%BF%D0%BE%D0%B3%D0%BE%D0%B4%D0%B0+%D0%B2+%D0%BC%D0%BE%D1%81%D0%BA%D0%B2%D0%B5&amp;url=https%3A//pogoda.mail.ru/prognoz/moskva/24hours/&amp;l10n=ru&amp;mime=html&amp;sign=505fb0d625fa755a0c096ebbb3538c05&amp;keyno=0</saved-copy-url>
+<url>https://pogoda.mail.ru/prognoz/moskva/24hours/</url>
+<domain>pogoda.mail.ru</domain>
+<title><hlword>Погода</hlword> по часам <hlword>в</hlword> <hlword>Москве</hlword> сегодня, точный прогноз - <hlword>Погода</hlword> Mail</title>
+<modtime>20210126T161629</modtime>
+<size>3584</size>
+<charset>utf-8</charset>
+<mime-type>text/html</mime-type>
+<passages>
+<passage><hlword>Погода</hlword> <hlword>в</hlword> <hlword>Москве</hlword> по часам на сегодня, температура воздуха, облачность, осадки, давление, влажность.</passage>
+</passages>
+<properties>
+<_PassagesType>0</_PassagesType>
+<lang>ru</lang>
+</properties>
+</doc>
+</group>
+<group>
+<doccount>1</doccount>
+<relevance priority="all"/>
+<doc id="ZF539CF938F334019">
+<relevance priority="all"/>
+<saved-copy-url>https://yandexwebcache.net/yandbtm?fmode=inject&amp;tm=1781174335&amp;tld=ru&amp;lang=ru&amp;la=1781145856&amp;text=%D0%BF%D0%BE%D0%B3%D0%BE%D0%B4%D0%B0+%D0%B2+%D0%BC%D0%BE%D1%81%D0%BA%D0%B2%D0%B5&amp;url=https%3A//2gis.ru/moscow/weather&amp;l10n=ru&amp;mime=html&amp;sign=4db4a497bbab7d83a6330baef99cb807&amp;keyno=0</saved-copy-url>
+<url>https://2gis.ru/moscow/weather</url>
+<domain>2gis.ru</domain>
+<title><hlword>Погода</hlword> <hlword>в</hlword> <hlword>Москве</hlword> сегодня — точный прогноз, температура, ветер...</title>
+<modtime>20151021T224535</modtime>
+<size>524</size>
+<charset>utf-8</charset>
+<mime-type>text/html</mime-type>
+<passages>
+<passage><hlword>Погода</hlword> <hlword>Москва</hlword>. 20°. Небольшая облачность без осадков. Ощущается как 21°.</passage>
+</passages>
+<properties>
+<_PassagesType>0</_PassagesType>
+<lang>ru</lang>
+</properties>
+</doc>
+</group>
+<group>
+<doccount>1</doccount>
+<relevance priority="all"/>
+<doc id="ZC5A8D0DBD9F749AC">
+<relevance priority="all"/>
+<saved-copy-url>https://yandexwebcache.net/yandbtm?fmode=inject&amp;tm=1781174335&amp;tld=ru&amp;lang=ru&amp;la=1781103488&amp;text=%D0%BF%D0%BE%D0%B3%D0%BE%D0%B4%D0%B0+%D0%B2+%D0%BC%D0%BE%D1%81%D0%BA%D0%B2%D0%B5&amp;url=https%3A//pogoda7.ru/prognoz/gorod134242-Russia-g_Moskva-Moskva/1days/full&amp;l10n=ru&amp;mime=html&amp;sign=a8613516b45539086a5560082b1368b9&amp;keyno=0</saved-copy-url>
+<url>https://pogoda7.ru/prognoz/gorod134242-Russia-g_Moskva-Moskva/1days/full</url>
+<domain>pogoda7.ru</domain>
+<title><hlword>Погода</hlword> по часам <hlword>в</hlword> <hlword>Москве</hlword> на сегодня и завтра. <hlword>Погода</hlword> сейчас...</title>
+<modtime>20151130T205004</modtime>
+<size>1126</size>
+<charset>utf-8</charset>
+<mime-type>text/html</mime-type>
+<passages>
+<passage><hlword>Погода</hlword> <hlword>в</hlword> <hlword>Москве</hlword> на сегодня и завтра по часам.</passage>
+</passages>
+<properties>
+<_PassagesType>0</_PassagesType>
+<lang>ru</lang>
+</properties>
+</doc>
+</group>
+<group>
+<doccount>1</doccount>
+<relevance priority="all"/>
+<doc id="Z4B146A2886DC822B">
+<relevance priority="all"/>
+<saved-copy-url>https://yandexwebcache.net/yandbtm?fmode=inject&amp;tm=1781174335&amp;tld=ru&amp;lang=ru&amp;la=1780759040&amp;text=%D0%BF%D0%BE%D0%B3%D0%BE%D0%B4%D0%B0+%D0%B2+%D0%BC%D0%BE%D1%81%D0%BA%D0%B2%D0%B5&amp;url=https%3A//yandex.ru/pogoda/ru/moscow/details/running/tomorrow&amp;l10n=ru&amp;mime=html&amp;sign=b331bfa98ce9d7338cbbf6f2ac9b965b&amp;keyno=0</saved-copy-url>
+<url>https://yandex.ru/pogoda/ru/moscow/details/running/tomorrow</url>
+<domain>yandex.ru</domain>
+<title><hlword>Погода</hlword> для занятий спортом <hlword>в</hlword> <hlword>Москве</hlword>, Россия на завтра</title>
+<modtime>20230320T225949</modtime>
+<size>2119</size>
+<charset>utf-8</charset>
+<mime-type>text/html</mime-type>
+<passages>
+<passage>Узнайте, какая <hlword>погода</hlword> для спорта <hlword>в</hlword> <hlword>Москве</hlword>, Россия: прогноз для занятий спортом на завтра. Температура, осадки, ветер – выбирайте комфортные условия для тренировок.</passage>
+</passages>
+<properties>
+<_PassagesType>0</_PassagesType>
+<lang>ru</lang>
+</properties>
+</doc>
+</group>
+<group>
+<doccount>1</doccount>
+<relevance priority="all"/>
+<doc id="Z176E0C17AC4262B0">
+<relevance priority="all"/>
+<saved-copy-url>https://yandexwebcache.net/yandbtm?fmode=inject&amp;tm=1781174335&amp;tld=ru&amp;lang=ru&amp;la=1781157120&amp;text=%D0%BF%D0%BE%D0%B3%D0%BE%D0%B4%D0%B0+%D0%B2+%D0%BC%D0%BE%D1%81%D0%BA%D0%B2%D0%B5&amp;url=https%3A//www.gismeteo.ru/&amp;l10n=ru&amp;mime=html&amp;sign=3307e609c580222128fb322f8966123d&amp;keyno=0</saved-copy-url>
+<url>https://www.gismeteo.ru/</url>
+<domain>www.gismeteo.ru</domain>
+<title>GISMETEO: <hlword>Погода</hlword> <hlword>в</hlword> России, прогноз <hlword>погоды</hlword> на сегодня, завтра...</title>
+<modtime>20061106T030000</modtime>
+<size>634</size>
+<charset>utf-8</charset>
+<mime-type>text/html</mime-type>
+<passages>
+<passage><hlword>Погода</hlword> на выходные См. прогноз. <hlword>Москва</hlword>.</passage>
+</passages>
+<properties>
+<_PassagesType>0</_PassagesType>
+<lang>ru</lang>
+</properties>
+</doc>
+</group>
+<found priority="phrase">1729</found>
+<found priority="strict">1729</found>
+<found priority="all">1729</found>
+<found-docs priority="phrase">3532</found-docs>
+<found-docs priority="strict">3532</found-docs>
+<found-docs priority="all">3532</found-docs>
+<found-docs-human>нашёл 4 тыс. ответов</found-docs-human>
+</grouping>
+</results>
+</response>
+<resource-usage>
+<cpu-time-sum>6094627</cpu-time-sum>
+<cpu-time-max>28598</cpu-time-max>
+</resource-usage>
+</yandexsearch>

@@ -1,0 +1,16 @@
+# Secrets — never commit
+keys.json
+.env
+
+# OS
+.DS_Store
+
+# Python
+.venv/
+__pycache__/
+*.pyc
+*.egg-info/
+.pytest_cache/
+.ruff_cache/
+build/
+dist/

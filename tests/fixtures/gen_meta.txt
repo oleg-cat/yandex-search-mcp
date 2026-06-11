@@ -1,0 +1,5 @@
+status: 200
+content-type: application/json
+content-length: 4266
+first-bytes: b'[{\n "message": {\n  "content": "**Model Context Protocol (MCP'
+last-bytes: b'\xd0\xb0\xd0\xba\xd0\xbe\xd0\xb5 \xd0\xbf\xd1\x80\xd0\xbe\xd1\x82\xd0\xbe\xd0\xba\xd0\xbe\xd0\xbb TCP (Model Context Protocol)?"\n}\n]'

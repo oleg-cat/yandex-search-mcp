@@ -1,0 +1,267 @@
+<?xml version="1.0" encoding="utf-8"?>
+<yandexsearch version="1.0">
+<request>
+<query>ласточкино гнездо крым</query>
+<page>0</page>
+<sortby order="descending" priority="no">rlv</sortby>
+<maxpassages>3</maxpassages>
+<groupings>
+<groupby attr="" mode="flat" groups-on-page="10" docs-in-group="1" curcateg="-1"/>
+</groupings>
+</request>
+<response date="20260611T103854">
+<reqid>1781174334260368-15548729386663352000-balancer-l7leveler-kubr-yp-vla-141-BAL</reqid>
+<found priority="phrase">159876</found>
+<found priority="strict">159876</found>
+<found priority="all">159876</found>
+<found-human>Нашлось 160 тыс. ответов</found-human>
+<is-local>no</is-local>
+<results>
+<grouping attr="" mode="flat" groups-on-page="10" docs-in-group="1" curcateg="-1">
+<page first="1" last="10">0</page>
+<group>
+<doccount>1</doccount>
+<relevance priority="all"/>
+<doc id="Z0DF16CBF7CBD94F2">
+<relevance priority="all"/>
+<saved-copy-url>https://yandexwebcache.net/yandbtm?fmode=inject&amp;tm=1781174334&amp;tld=ru&amp;lang=ru&amp;la=1780799488&amp;text=%D0%BB%D0%B0%D1%81%D1%82%D0%BE%D1%87%D0%BA%D0%B8%D0%BD%D0%BE+%D0%B3%D0%BD%D0%B5%D0%B7%D0%B4%D0%BE+%D0%BA%D1%80%D1%8B%D0%BC&amp;url=https%3A//xn-----6kcbqggkggtcllvchedg5cwa0j.xn--p1ai/&amp;l10n=ru&amp;mime=html&amp;sign=6197d5d0fd6f137fb405ad2bf3498e0a&amp;keyno=0</saved-copy-url>
+<url>https://xn-----6kcbqggkggtcllvchedg5cwa0j.xn--p1ai/</url>
+<domain>xn-----6kcbqggkggtcllvchedg5cwa0j.xn--p1ai</domain>
+<title>Замок &quot;<hlword>Ласточкино</hlword> <hlword>Гнездо</hlword>&quot; - официальный сайт</title>
+<modtime>20150908T164904</modtime>
+<size>6271</size>
+<charset>utf-8</charset>
+<mime-type>text/html</mime-type>
+<passages>
+<passage>Государственное бюджетное учреждение &quot;Дворец-замок &quot;<hlword>Ласточкино</hlword> <hlword>Гнездо</hlword>&quot;. Официальный сайт предприятия. Расписание и прочая информация.</passage>
+</passages>
+<properties>
+<_PassagesType>0</_PassagesType>
+<lang>ru</lang>
+<extended-text>Один из них – Лимен-Бурун – заканчивается живописной скалой Парус. Самый красивый – Аврорина скала с замком «Ласточкино гнездо». И третий – отрог Монастыр-Бурун (в переводе с тюркского означает «Монастырский мыс»). В раннем средневековье здесь стояли монастырь и церковь святого Теодора Тирона. Slide 2. П.Л. Штейнгель. Свой нынешний вид «Ласточкино гнездо» получило благодаря немецкому нефтяному промышленнику барону П. Л. Штейнгелю, который любил отдыхать в Крыму. Штейнгель приобрёл на Аврориной скале дачный участок и решил построить там романтический замок, который напоминает средневековые сооружения на берегах Рейна.</extended-text>
+</properties>
+</doc>
+</group>
+<group>
+<doccount>1</doccount>
+<relevance priority="all"/>
+<doc touchdown="РКН: сайт нарушает закон РФ" id="ZA25376F5B5D2C314">
+<relevance priority="all"/>
+<saved-copy-url>https://yandexwebcache.net/yandbtm?fmode=inject&amp;tm=1781174334&amp;tld=ru&amp;lang=ru&amp;la=1780437504&amp;text=%D0%BB%D0%B0%D1%81%D1%82%D0%BE%D1%87%D0%BA%D0%B8%D0%BD%D0%BE+%D0%B3%D0%BD%D0%B5%D0%B7%D0%B4%D0%BE+%D0%BA%D1%80%D1%8B%D0%BC&amp;url=https%3A//ru.wikipedia.org/wiki/%25D0%259B%25D0%25B0%25D1%2581%25D1%2582%25D0%25BE%25D1%2587%25D0%25BA%25D0%25B8%25D0%25BD%25D0%25BE_%25D0%25B3%25D0%25BD%25D0%25B5%25D0%25B7%25D0%25B4%25D0%25BE_%28%25D0%259A%25D1%2580%25D1%258B%25D0%25BC%29&amp;l10n=ru&amp;mime=html&amp;sign=75e09253a941f5d9c02c629686142ca1&amp;keyno=0</saved-copy-url>
+<url>https://ru.wikipedia.org/wiki/%D0%9B%D0%B0%D1%81%D1%82%D0%BE%D1%87%D0%BA%D0%B8%D0%BD%D0%BE_%D0%B3%D0%BD%D0%B5%D0%B7%D0%B4%D0%BE_(%D0%9A%D1%80%D1%8B%D0%BC)</url>
+<domain>ru.wikipedia.org</domain>
+<title><hlword>Ласточкино</hlword> <hlword>гнездо</hlword> (<hlword>Крым</hlword>) — Википедия</title>
+<modtime>20071008T003338</modtime>
+<size>7624</size>
+<charset>utf-8</charset>
+<mime-type>text/html</mime-type>
+<passages>
+<passage>С 2015 года организационно объект управляется Государственном бюджетным учреждением Республики <hlword>Крым</hlword> «Дворец-замок «<hlword>Ласточкино</hlword> <hlword>гнездо</hlword>». Директор музея — Щур Юрий Анатольевич[44].</passage>
+</passages>
+<properties>
+<_PassagesType>0</_PassagesType>
+<lang>ru</lang>
+<extended-text>«Ла́сточкино гнездо́» — псевдоготический замок, расположенный на отвесной 40-метровой скале мыса Ай-Тодор в посёлке Гаспра Ялтинского городского округа Крыма. Нынешний облик принял в 1912 году.</extended-text>
+</properties>
+</doc>
+</group>
+<group>
+<doccount>1</doccount>
+<relevance priority="all"/>
+<doc id="Z4AF283F4D5BFC14E">
+<relevance priority="all"/>
+<saved-copy-url>https://yandexwebcache.net/yandbtm?fmode=inject&amp;tm=1781174334&amp;tld=ru&amp;lang=ru&amp;la=1780801152&amp;text=%D0%BB%D0%B0%D1%81%D1%82%D0%BE%D1%87%D0%BA%D0%B8%D0%BD%D0%BE+%D0%B3%D0%BD%D0%B5%D0%B7%D0%B4%D0%BE+%D0%BA%D1%80%D1%8B%D0%BC&amp;url=https%3A//travel.yandex.ru/journal/chem-udivit-zamok-lastochkino-gnezdo/&amp;l10n=ru&amp;mime=html&amp;sign=592c7a93a06b8db556d83d93e7357ae1&amp;keyno=0</saved-copy-url>
+<url>https://travel.yandex.ru/journal/chem-udivit-zamok-lastochkino-gnezdo/</url>
+<domain>travel.yandex.ru</domain>
+<title>Замок «<hlword>Ласточкино</hlword> <hlword>гнездо</hlword>» в <hlword>Крыму</hlword>: история возникновения...</title>
+<modtime>20250713T121225</modtime>
+<size>2460</size>
+<charset>utf-8</charset>
+<mime-type>text/html</mime-type>
+<passages>
+<passage>«<hlword>Ласточкино</hlword> <hlword>гнездо</hlword>» — романтичный замок на краю скалы и символ <hlword>Крыма</hlword>.</passage>
+<passage>Укрепили скалу и сделали «<hlword>Ласточкино</hlword> <hlword>гнездо</hlword>» таким, каким его видел архитектор Шервуд. С 1981 по 2011 год здесь работал итальянский ресторан, потом до 2019-го — выставочный зал.</passage>
+</passages>
+<properties>
+<_PassagesType>0</_PassagesType>
+<lang>ru</lang>
+<extended-text>«Ласточкино гнездо» — романтичный замок на краю скалы и символ Крыма. Туристы едут сюда, чтобы сделать фотографию на фоне красивого здания. Но мало кто знает историю создания замка и что внутри него. В этом материале всё, что надо знать про «Ласточкино гнездо»: легенды, достопримечательности в окрестностях и интересные факты. История. Первая вариация замка — небольшой каменный домик — появилась в конце XIX веке, когда все строили дачи в Крыму. Имением «Ласточкино гнездо» владела семья Ялтинского врача Тобина. Романтичный дом на скале придумала жена доктора — Елизавета. Рядом была ещё одна постройка, только из белого камня, и называли его «Белая Ласточка».</extended-text>
+</properties>
+</doc>
+</group>
+<group>
+<doccount>1</doccount>
+<relevance priority="all"/>
+<doc id="Z25A793A8F9E9CA0A">
+<relevance priority="all"/>
+<saved-copy-url>https://yandexwebcache.net/yandbtm?fmode=inject&amp;tm=1781174334&amp;tld=ru&amp;lang=ru&amp;la=1780801536&amp;text=%D0%BB%D0%B0%D1%81%D1%82%D0%BE%D1%87%D0%BA%D0%B8%D0%BD%D0%BE+%D0%B3%D0%BD%D0%B5%D0%B7%D0%B4%D0%BE+%D0%BA%D1%80%D1%8B%D0%BC&amp;url=https%3A//yandex.ru/maps/org/zamok_lastochkino_gnezdo/1175275757/&amp;l10n=ru&amp;mime=html&amp;sign=4e1a560df5917b00c0ebaedc07d9a31c&amp;keyno=0</saved-copy-url>
+<url>https://yandex.ru/maps/org/zamok_lastochkino_gnezdo/1175275757/</url>
+<domain>yandex.ru</domain>
+<title>Замок <hlword>Ласточкино</hlword> <hlword>гнездо</hlword>, музей, Алупкинское... — Яндекс Карты</title>
+<headline>Музей «Замок <hlword>Ласточкино</hlword> <hlword>гнездо</hlword>» по адресу Республика <hlword>Крым</hlword>, муниципальный округ Ялта, посёлок городского типа Гаспра, Алупкинское шоссе, 9А, +7 978 004 91 22. Читать 11333 отзыва, смотреть 499 фото, панорамы, часы работы.</headline>
+<modtime>20150831T034811</modtime>
+<size>3018</size>
+<charset>utf-8</charset>
+<mime-type>text/html</mime-type>
+<properties>
+<_PassagesType>0</_PassagesType>
+<lang>ru</lang>
+<extended-text>Музей «Замок Ласточкино гнездо» по адресу Республика Крым, муниципальный округ Ялта, посёлок городского типа Гаспра, Алупкинское шоссе, 9А, ☎️ +7 978 004 91 22. Читать 11333 отзыва, смотреть 499 фото, панорамы, часы работы. Посмотреть входы на карте и построить маршрут в Яндекс Картах.</extended-text>
+</properties>
+</doc>
+</group>
+<group>
+<doccount>1</doccount>
+<relevance priority="all"/>
+<doc id="ZF2548934B0BE7A5D">
+<relevance priority="all"/>
+<saved-copy-url>https://yandexwebcache.net/yandbtm?fmode=inject&amp;tm=1781174334&amp;tld=ru&amp;lang=ru&amp;la=1780800512&amp;text=%D0%BB%D0%B0%D1%81%D1%82%D0%BE%D1%87%D0%BA%D0%B8%D0%BD%D0%BE+%D0%B3%D0%BD%D0%B5%D0%B7%D0%B4%D0%BE+%D0%BA%D1%80%D1%8B%D0%BC&amp;url=https%3A//dzen.ru/a/aHkIDlqyAhOpy5Fk&amp;l10n=ru&amp;mime=html&amp;sign=cddafa0d2091dd182bb72d15e7a7f949&amp;keyno=0</saved-copy-url>
+<url>https://dzen.ru/a/aHkIDlqyAhOpy5Fk</url>
+<domain>dzen.ru</domain>
+<title>Гид по замку «<hlword>Ласточкино</hlword> <hlword>гнездо</hlword>»: готика, подводные... | Дзен</title>
+<modtime>20250717T184517</modtime>
+<size>4809</size>
+<charset>utf-8</charset>
+<mime-type>text/html</mime-type>
+<passages>
+<passage>Императоров в <hlword>Крыму</hlword> давно нет, а Солнечная тропа живёт и радует туристов. В Яндекс Картах виден весь маршрут: он продолжительный и следует до «<hlword>Ласточкиного</hlword> <hlword>гнезда</hlword>». Везде есть указатели, главное — их не пропустить.</passage>
+</passages>
+<properties>
+<_PassagesType>0</_PassagesType>
+<lang>ru</lang>
+<extended-text>«Ласточкино гнездо» — романтичный замок на краю скалы и символ Крыма. Туристы едут сюда, чтобы сделать фотографию на фоне красивого здания. Но мало кто знает историю создания замка и что внутри него. В этом материале всё, что надо знать про «Ласточкино гнездо»: легенды, достопримечательности в окрестностях и интересные факты. Первая вариация замка — небольшой каменный домик — появилась в конце XIX веке, когда все строили дачи в Крыму. Имением «Ласточкино гнездо» владела семья Ялтинского врача Тобина. Романтичный дом на скале придумала жена доктора — Елизавета. Рядом была ещё одна постройка, только из белого камня, и называли его «Белая Ласточка».</extended-text>
+</properties>
+</doc>
+</group>
+<group>
+<doccount>1</doccount>
+<relevance priority="all"/>
+<doc id="ZE26374F29913312A">
+<relevance priority="all"/>
+<saved-copy-url>https://yandexwebcache.net/yandbtm?fmode=inject&amp;tm=1781174334&amp;tld=ru&amp;lang=ru&amp;la=1780804352&amp;text=%D0%BB%D0%B0%D1%81%D1%82%D0%BE%D1%87%D0%BA%D0%B8%D0%BD%D0%BE+%D0%B3%D0%BD%D0%B5%D0%B7%D0%B4%D0%BE+%D0%BA%D1%80%D1%8B%D0%BC&amp;url=https%3A//dzen.ru/a/acecc6PvThj7a9cj&amp;l10n=ru&amp;mime=html&amp;sign=d4afb0ade2e04a31ab0a14b2630fa5f8&amp;keyno=0</saved-copy-url>
+<url>https://dzen.ru/a/acecc6PvThj7a9cj</url>
+<domain>dzen.ru</domain>
+<title>Тайна Аврориной скалы: что скрывает «<hlword>Ласточкино</hlword> <hlword>гнездо</hlword>»? | Дзен</title>
+<modtime>20260401T000640</modtime>
+<size>5453</size>
+<charset>utf-8</charset>
+<mime-type>text/html</mime-type>
+<passages>
+<passage>Самое серьезное испытание ждало «<hlword>Ласточкино</hlword> <hlword>гнездо</hlword>» в 1927 году. В сентябре на <hlword>Крым</hlword> обрушилось мощное землетрясение, сила которого в эпицентре достигала 6-7 баллов по шкале Рихтера. Удар был настолько сильным, что скала Аврорина дала трещину.</passage>
+</passages>
+<properties>
+<_PassagesType>0</_PassagesType>
+<lang>ru</lang>
+<extended-text>Самое серьезное испытание ждало «Ласточкино гнездо» в 1927 году. В сентябре на Крым обрушилось мощное землетрясение, сила которого в эпицентре достигала 6-7 баллов по шкале Рихтера. Удар был настолько сильным, что скала Аврорина дала трещину. Свидетели рассказывали, что море буквально кипело, а земля ходила ходуном. Научные исследования, проведенные в 2012–2018, подтвердили уникальную устойчивость здания. Согласно их докладам, «Ласточкино гнездо» уцелело благодаря грамотному инженерному решению фундамента, которое использовал Шервуд-младший. Однако землетрясение нанесло серьезный урон: каменная кладка дала трещины, а главное — разрушилась часть скалы.</extended-text>
+</properties>
+</doc>
+</group>
+<group>
+<doccount>1</doccount>
+<relevance priority="all"/>
+<doc id="Z2BCA61431ACC3861">
+<relevance priority="all"/>
+<saved-copy-url>https://yandexwebcache.net/yandbtm?fmode=inject&amp;tm=1781174334&amp;tld=ru&amp;lang=ru&amp;la=1780569984&amp;text=%D0%BB%D0%B0%D1%81%D1%82%D0%BE%D1%87%D0%BA%D0%B8%D0%BD%D0%BE+%D0%B3%D0%BD%D0%B5%D0%B7%D0%B4%D0%BE+%D0%BA%D1%80%D1%8B%D0%BC&amp;url=https%3A//bolshayastrana.com/dostoprimechatelnosti/krym/lastochkino-gnezdo-129&amp;l10n=ru&amp;mime=html&amp;sign=265aaaa5a7aa550dcde6aafe66e4b4c8&amp;keyno=0</saved-copy-url>
+<url>https://bolshayastrana.com/dostoprimechatelnosti/krym/lastochkino-gnezdo-129</url>
+<domain>bolshayastrana.com</domain>
+<title><hlword>Ласточкино</hlword> <hlword>гнездо</hlword>: где находится, история, как... | Большая Страна</title>
+<modtime>20250530T055954</modtime>
+<size>2176</size>
+<charset>utf-8</charset>
+<mime-type>text/html</mime-type>
+<passages>
+<passage><hlword>Ласточкино</hlword> <hlword>Гнездо</hlword> в <hlword>Крыму</hlword>.</passage>
+<passage><hlword>Ласточкино</hlword> <hlword>гнездо</hlword> — крошечный псевдоготический дворец на Аврориной скале, один из символов <hlword>Крыма</hlword>. Изящное здание сочетает романтический облик средневекового бастиона с инженерными решениями начала XX века.</passage>
+</passages>
+<properties>
+<_PassagesType>0</_PassagesType>
+<lang>ru</lang>
+<extended-text>Ласточкино гнездо — крошечный псевдоготический дворец на Аврориной скале, один из символов Крыма. Изящное здание сочетает романтический облик средневекового бастиона с инженерными решениями начала XX века.</extended-text>
+</properties>
+</doc>
+</group>
+<group>
+<doccount>1</doccount>
+<relevance priority="all"/>
+<doc id="ZCE292F070EB3BEB2">
+<relevance priority="all"/>
+<saved-copy-url>https://yandexwebcache.net/yandbtm?fmode=inject&amp;tm=1781174334&amp;tld=ru&amp;lang=ru&amp;la=1780728064&amp;text=%D0%BB%D0%B0%D1%81%D1%82%D0%BE%D1%87%D0%BA%D0%B8%D0%BD%D0%BE+%D0%B3%D0%BD%D0%B5%D0%B7%D0%B4%D0%BE+%D0%BA%D1%80%D1%8B%D0%BC&amp;url=https%3A//ru.ruwiki.ru/wiki/%25D0%259B%25D0%25B0%25D1%2581%25D1%2582%25D0%25BE%25D1%2587%25D0%25BA%25D0%25B8%25D0%25BD%25D0%25BE_%25D0%25B3%25D0%25BD%25D0%25B5%25D0%25B7%25D0%25B4%25D0%25BE_%28%25D0%259A%25D1%2580%25D1%258B%25D0%25BC%29&amp;l10n=ru&amp;mime=html&amp;sign=ac62a4d9d101f17b1441ccc17fa2d863&amp;keyno=0</saved-copy-url>
+<url>https://ru.ruwiki.ru/wiki/%D0%9B%D0%B0%D1%81%D1%82%D0%BE%D1%87%D0%BA%D0%B8%D0%BD%D0%BE_%D0%B3%D0%BD%D0%B5%D0%B7%D0%B4%D0%BE_(%D0%9A%D1%80%D1%8B%D0%BC)</url>
+<domain>ru.ruwiki.ru</domain>
+<title><hlword>Ласточкино</hlword> <hlword>гнездо</hlword> (<hlword>Крым</hlword>) — Рувики: Интернет-энциклопедия</title>
+<modtime>20230630T172117</modtime>
+<size>4864</size>
+<charset>utf-8</charset>
+<mime-type>text/html</mime-type>
+<passages>
+<passage>С 2015 года организационно объект управляется Государственном бюджетным учреждением Республики <hlword>Крым</hlword> &quot;Дворец-замок «<hlword>Ласточкино</hlword> <hlword>гнездо</hlword>». Директор музея — Щур Юрий Анатольевич[43]. «<hlword>Ласточкино</hlword> <hlword>гнездо</hlword>» можно осмотреть не только снаружи, но и...</passage>
+</passages>
+<properties>
+<_PassagesType>0</_PassagesType>
+<lang>ru</lang>
+<extended-text>«Ла́сточкино гнездо́» — готический замок, расположенный на отвесной 40-метровой скале мыса Ай-Тодор в посёлке Гаспра Ялтинского городского округа Крыма. Нынешний облик принял в 1912 году. Отстроен был для богатой дворянской династии.</extended-text>
+</properties>
+</doc>
+</group>
+<group>
+<doccount>1</doccount>
+<relevance priority="all"/>
+<doc id="Z2EBC8811B47B2CFF">
+<relevance priority="all"/>
+<saved-copy-url>https://yandexwebcache.net/yandbtm?fmode=inject&amp;tm=1781174334&amp;tld=ru&amp;lang=ru&amp;la=1780643840&amp;text=%D0%BB%D0%B0%D1%81%D1%82%D0%BE%D1%87%D0%BA%D0%B8%D0%BD%D0%BE+%D0%B3%D0%BD%D0%B5%D0%B7%D0%B4%D0%BE+%D0%BA%D1%80%D1%8B%D0%BC&amp;url=https%3A//dzen.ru/a/YFYZJImFXw_eywzA&amp;l10n=ru&amp;mime=html&amp;sign=2401533494d7058c1b629a553c167346&amp;keyno=0</saved-copy-url>
+<url>https://dzen.ru/a/YFYZJImFXw_eywzA</url>
+<domain>dzen.ru</domain>
+<title><hlword>Ласточкино</hlword> <hlword>гнездо</hlword> открылось после реставрации | История... | Дзен</title>
+<modtime>20210325T160011</modtime>
+<size>4270</size>
+<charset>utf-8</charset>
+<mime-type>text/html</mime-type>
+<passages>
+<passage><hlword>Ласточкино</hlword> <hlword>гнездо</hlword> – самая популярная и самая узнаваемая достопримечательность <hlword>Крыма</hlword>. Многие осуждают такую популярность, называя такой интерес к замку дурновкусием. Ведь изначально это была обычная дача для отдыха...</passage>
+</passages>
+<properties>
+<_PassagesType>0</_PassagesType>
+<lang>ru</lang>
+<extended-text>Ласточкино гнездо – самая популярная и самая узнаваемая достопримечательность Крыма. Многие осуждают такую популярность, называя такой интерес к замку дурновкусием. Ведь изначально это была обычная дача для отдыха, стилизованная под средневековый замок. Но согласитесь, что этот замок чертовски красиво вписался в пейзаж. Вдобавок в 2020 году завершилась продолжительная реконструкция и теперь любой желающий может прогуляться внутри. Где находится Многие думают, что Ласточкино гнездо находится в шаговой доступности от центра Ялты. К сожалению, это не так. #Замок на скале находится в 11 км от Ялты в поселке Гаспра.</extended-text>
+</properties>
+</doc>
+</group>
+<group>
+<doccount>1</doccount>
+<relevance priority="all"/>
+<doc id="ZA7F73E0F59E0AEDE">
+<relevance priority="all"/>
+<saved-copy-url>https://yandexwebcache.net/yandbtm?fmode=inject&amp;tm=1781174334&amp;tld=ru&amp;lang=ru&amp;la=1781134208&amp;text=%D0%BB%D0%B0%D1%81%D1%82%D0%BE%D1%87%D0%BA%D0%B8%D0%BD%D0%BE+%D0%B3%D0%BD%D0%B5%D0%B7%D0%B4%D0%BE+%D0%BA%D1%80%D1%8B%D0%BC&amp;url=https%3A//www.ixbt.com/live/travel/kem-i-dlya-kogo-bylo-postroeno-lastochkino-gnezdo-v-krymu.html&amp;l10n=ru&amp;mime=html&amp;sign=a3095b1e8f67f4b502e6a2ab88126e48&amp;keyno=0</saved-copy-url>
+<url>https://www.ixbt.com/live/travel/kem-i-dlya-kogo-bylo-postroeno-lastochkino-gnezdo-v-krymu.html</url>
+<domain>www.ixbt.com</domain>
+<title>Кем и для кого было построено <hlword>Ласточкино</hlword> <hlword>гнездо</hlword> в <hlword>Крыму</hlword>...</title>
+<modtime>20240919T210816</modtime>
+<size>2799</size>
+<charset>utf-8</charset>
+<mime-type>text/html</mime-type>
+<passages>
+<passage><hlword>Ласточкино</hlword> <hlword>гнездо</hlword> — одна из самых красивых достопримечательностей <hlword>Крыма</hlword>, являющаяся символом Южного берега полуострова.</passage>
+<passage>«Новое <hlword>Ласточкино</hlword> <hlword>гнездо</hlword>» было выполнено из серого известняка и желтого камня, привезенного из Евпатории.</passage>
+</passages>
+<properties>
+<_PassagesType>0</_PassagesType>
+<lang>ru</lang>
+<extended-text>Ласточкино гнездо — одна из самых красивых достопримечательностей Крыма, являющаяся символом Южного берега полуострова. Этот замечательный замок, возвышающийся на скале мыса Ай-Тодор над Черным морем, привлекает внимание туристов со всего мира своей необычной архитектурой и захватывающим видом на окружающие пейзажи. Однако многие задаются вопросом — для кого было построено «Ласточкино гнездо»? Автор: A. Savin Источник: ru.wikipedia.org. История замка началась в начале 20 века, когда представитель рода Штейнгель с немецкими корнями заказал строительство этого уникального сооружения взамен старого здания, давшего трещину.</extended-text>
+</properties>
+</doc>
+</group>
+<found priority="phrase">3184</found>
+<found priority="strict">3184</found>
+<found priority="all">3184</found>
+<found-docs priority="phrase">3522</found-docs>
+<found-docs priority="strict">3522</found-docs>
+<found-docs priority="all">3522</found-docs>
+<found-docs-human>нашёл 4 тыс. ответов</found-docs-human>
+</grouping>
+</results>
+</response>
+<resource-usage>
+<cpu-time-sum>6831752</cpu-time-sum>
+<cpu-time-max>17842</cpu-time-max>
+</resource-usage>
+</yandexsearch>
