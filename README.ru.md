@@ -2,7 +2,7 @@
 
 [In English → README.md](README.md)
 
-Self-hosted MCP-сервер для **Yandex Search API v2**: веб-поиск, поиск изображений и генеративный поиск (AI-ответ с источниками). Ориентирован на русскоязычный поиск (все 6 индексов Яндекса: ru/com/tr/kk/be/uz), STDIO-транспорт, типизированные параметры, structured output.
+Self-hosted MCP-сервер для **Yandex Search API v2**: веб-поиск, поиск изображений и генеративный поиск (AI-ответ с источниками). Ориентирован на русскоязычный поиск (все 6 индексов Яндекса: ru/com/tr/kk/be/uz), STDIO или Streamable HTTP, типизированные параметры, structured output.
 
 Замена устаревшего официального `yandex/yandex-search-mcp-server` (только tr/en, XML-парсинг регэкспами, несуществующий пин зависимостей). Эталон качества — `brave/brave-search-mcp-server`.
 
@@ -26,8 +26,18 @@ Self-hosted MCP-сервер для **Yandex Search API v2**: веб-поиск,
 
 Требуется Python ≥ 3.11.
 
+**Быстрее всего — без клонирования, через [uv](https://docs.astral.sh/uv/):**
+
 ```bash
-git clone <repo-url> yandex-search-mcp
+YANDEX_SEARCH_API_KEY=<key> YANDEX_FOLDER_ID=<folder> uvx --from git+https://github.com/oleg-cat/yandex-search-mcp yandex-search-mcp
+```
+
+В клиенте: `claude mcp add yandex-search -e YANDEX_SEARCH_API_KEY=<key> -e YANDEX_FOLDER_ID=<folder> -- uvx --from git+https://github.com/oleg-cat/yandex-search-mcp yandex-search-mcp`.
+
+**Из исходников:**
+
+```bash
+git clone https://github.com/oleg-cat/yandex-search-mcp.git yandex-search-mcp
 cd yandex-search-mcp
 python3.12 -m venv .venv
 .venv/bin/pip install -r requirements.txt
@@ -96,18 +106,26 @@ YANDEX_FOLDER_ID = "<folder>"
 }
 ```
 
+## HTTP-транспорт
+
+`YANDEX_MCP_TRANSPORT=http` поднимает MCP Streamable HTTP на `http://<host>:<port>/mcp` (по умолчанию `127.0.0.1:8000`). На localhost защита от DNS rebinding включается автоматически. **Аутентификации у эндпоинта нет** — слушайте `0.0.0.0` только за reverse proxy или во внутренней сети: любой, кто до него дотянется, тратит вашу квоту Яндекса.
+
 ## Переменные окружения
 
 | Переменная | Обяз. | Дефолт | Описание |
 |---|---|---|---|
-| `YANDEX_SEARCH_API_KEY` | да | — | Api-Key (scope `yc.search-api.execute`) |
+| `YANDEX_SEARCH_API_KEY` | да* | — | Api-Key (scope `yc.search-api.execute`) |
+| `YANDEX_SEARCH_API_KEY_FILE` | нет | — | *Альтернатива: путь к файлу с ключом (Docker/K8s secrets) |
 | `YANDEX_FOLDER_ID` | да | — | Folder ID (роль `search-api.editor`) |
-| `YANDEX_MCP_ENABLED_TOOLS` | нет | все | Whitelist инструментов через пробел, например `"yandex_web_search"` |
+| `YANDEX_MCP_ENABLED_TOOLS` | нет | все | Whitelist инструментов через пробел или запятую, например `"yandex_web_search"` |
+| `YANDEX_MCP_DISABLED_TOOLS` | нет | — | Blacklist, применяется после whitelist, например `"yandex_gen_search"` |
 | `YANDEX_MCP_DEFAULT_SEARCH_TYPE` | нет | `ru` | Индекс по умолчанию: `ru/com/tr/kk/be/uz` |
 | `YANDEX_MCP_DEFAULT_REGION` | нет | — | Geo-id региона по умолчанию (225 — Россия, 213 — Москва) |
 | `YANDEX_MCP_TIMEOUT_WEB` | нет | `15` | Таймаут web/image-запросов, сек |
 | `YANDEX_MCP_TIMEOUT_GEN` | нет | `120` | Таймаут gen-запросов, сек |
 | `YANDEX_MCP_LOG_LEVEL` | нет | `INFO` | Уровень логирования (строго в stderr) |
+| `YANDEX_MCP_TRANSPORT` | нет | `stdio` | `stdio` или `http` (Streamable HTTP) |
+| `YANDEX_MCP_HOST` / `YANDEX_MCP_PORT` | нет | `127.0.0.1` / `8000` | Адрес для HTTP-режима |
 
 Старт без обязательных переменных завершается ошибкой в stderr и ненулевым кодом выхода.
 
@@ -151,9 +169,14 @@ YANDEX_FOLDER_ID = "<folder>"
 |---|---|---|
 | `query` | str | Вопрос |
 | `search_type` | как выше | Индекс |
-| `site` / `host` | str | Ограничить источники доменом (взаимоисключающие) |
+| `site` / `host` | str или список, ≤ 5 | Ограничить источники сайтами (с поддоменами) / точными хостами |
+| `url` | str или список, ≤ 10 | Ограничить конкретными страницами. `site`, `host`, `url` взаимоисключающие |
+| `fix_typos` | bool, по умолч. true | Исправление опечаток; `false` для кода, названий продуктов и жаргона (однажды оно превратило «MCP» в «TCP») |
+| `date` | str | Фильтр по дате в синтаксисе оператора `date:` без префикса, например `>20250101` |
+| `lang` | str | Язык документов, ISO 639-1 (`ru`, `en`) |
+| `doc_format` | `pdf/doc/rtf/xls/ods/ppt/odp/odt/odg/swf` | Формат файла документа |
 
-Ответ: `{answer, sources[{url, title, used}], is_answer_rejected, fixed_misspell_query}`. Лимит — **1 запрос/сек**; ответ занимает десятки секунд.
+Ответ: `{answer, sources[{url, title, used}], search_queries, is_answer_rejected, is_bullet_answer, problematic_answer, fixed_misspell_query}`. Лимит — **1 запрос/сек**; ответ занимает десятки секунд.
 
 ## Примеры
 
@@ -173,7 +196,7 @@ YANDEX_FOLDER_ID = "<folder>"
 | web / image | 10 | 10 000 |
 | gen | 1 | 1 000 |
 
-Сервер ретраит 429 и 5xx (3 попытки, экспоненциальный backoff), но квоты не обходит.
+Сервер ретраит 429 и 5xx (3 попытки, экспоненциальный backoff, учитывает `Retry-After` до 10 с), но квоты не обходит. Генеративный поиск **не повторяется** после таймаута чтения или обрыва соединения — запрос мог уже обработаться и оплатиться.
 
 ## Troubleshooting
 
@@ -189,7 +212,7 @@ YANDEX_FOLDER_ID = "<folder>"
 
 ```bash
 .venv/bin/pip install -e ".[dev]"
-.venv/bin/python -m pytest             # 49 тестов на живых фикстурах
+.venv/bin/python -m pytest             # 67 тестов на живых фикстурах
 npx @modelcontextprotocol/inspector .venv/bin/python -m yandex_search_mcp  # ручной smoke
 ```
 
