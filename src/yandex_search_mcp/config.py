@@ -29,6 +29,23 @@ ALL_TOOLS = ("yandex_web_search", "yandex_image_search", "yandex_gen_search")
 VALID_SEARCH_TYPES = ("ru", "com", "tr", "kk", "be", "uz")
 VALID_TRANSPORTS = ("stdio", "http")
 
+# Справка по переменным для `--help`; тест сверяет её со всеми ENV_*-константами
+ENV_HELP: tuple[tuple[str, str], ...] = (
+    (ENV_API_KEY, "Api-Key with scope yc.search-api.execute (required)"),
+    (ENV_API_KEY_FILE, "path to a file with the key, alternative to the variable above"),
+    (ENV_FOLDER_ID, "Yandex Cloud folder id, role search-api.editor (required)"),
+    (ENV_ENABLED_TOOLS, f"tool whitelist, space/comma separated (default: all: {' '.join(ALL_TOOLS)})"),
+    (ENV_DISABLED_TOOLS, "tool blacklist, applied after the whitelist"),
+    (ENV_DEFAULT_SEARCH_TYPE, f"default index: {'/'.join(VALID_SEARCH_TYPES)} (default: ru)"),
+    (ENV_DEFAULT_REGION, "default geo-id, e.g. 225 Russia, 213 Moscow (default: none)"),
+    (ENV_TIMEOUT_WEB, "web/image request timeout, seconds (default: 15)"),
+    (ENV_TIMEOUT_GEN, "gen request timeout, seconds (default: 120)"),
+    (ENV_LOG_LEVEL, "log level, logs go to stderr (default: INFO)"),
+    (ENV_TRANSPORT, f"{'/'.join(VALID_TRANSPORTS)} (default: stdio)"),
+    (ENV_HOST, "HTTP bind host (default: 127.0.0.1)"),
+    (ENV_PORT, "HTTP bind port (default: 8000)"),
+)
+
 
 class ConfigError(Exception):
     """Невалидная или отсутствующая конфигурация (выводится в stderr при старте)."""

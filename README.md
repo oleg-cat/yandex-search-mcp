@@ -45,6 +45,14 @@ YANDEX_SEARCH_API_KEY=<key> YANDEX_FOLDER_ID=<folder> uvx --from git+https://git
 
 With a client: `claude mcp add yandex-search -e YANDEX_SEARCH_API_KEY=<key> -e YANDEX_FOLDER_ID=<folder> -- uvx --from git+https://github.com/oleg-cat/yandex-search-mcp yandex-search-mcp`.
 
+**Updating:** uvx caches the build. To pull the latest version, rebuild and print it (the server does not start), then restart your MCP client:
+
+```bash
+uvx --refresh --from git+https://github.com/oleg-cat/yandex-search-mcp yandex-search-mcp --version
+```
+
+`yandex-search-mcp --help` lists every environment variable.
+
 **From source:**
 
 ```bash

@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "yandex-search-mcp"
-version = "0.2.0"
+version = "0.2.1"
 description = "Self-hosted MCP server for Yandex Search API v2 (web, image, generative search)"
 readme = "README.md"
 requires-python = ">=3.11"
