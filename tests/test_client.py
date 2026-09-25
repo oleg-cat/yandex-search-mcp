@@ -280,6 +280,50 @@ def test_entry_point_exits_1_without_config(monkeypatch, capsys):
     for name in ("YANDEX_SEARCH_API_KEY", "YANDEX_SEARCH_API_KEY_FILE", "YANDEX_FOLDER_ID"):
         monkeypatch.delenv(name, raising=False)
     with pytest.raises(SystemExit) as exc_info:
-        main()
+        main([])
     assert exc_info.value.code == 1
     assert "YANDEX_SEARCH_API_KEY" in capsys.readouterr().err
+
+
+# --- CLI: --version / --help не требуют ключей и не запускают сервер ---
+
+
+@pytest.fixture
+def no_credentials(monkeypatch):
+    for name in ("YANDEX_SEARCH_API_KEY", "YANDEX_SEARCH_API_KEY_FILE", "YANDEX_FOLDER_ID"):
+        monkeypatch.delenv(name, raising=False)
+
+
+def test_cli_version(no_credentials, capsys):
+    from yandex_search_mcp import __version__
+    from yandex_search_mcp.__main__ import main
+
+    with pytest.raises(SystemExit) as exc_info:
+        main(["--version"])
+    assert exc_info.value.code == 0
+    assert capsys.readouterr().out.strip() == f"yandex-search-mcp {__version__}"
+
+
+def test_cli_help_lists_every_env_variable(no_credentials, capsys):
+    from yandex_search_mcp import config
+    from yandex_search_mcp.__main__ import main
+
+    with pytest.raises(SystemExit) as exc_info:
+        main(["--help"])
+    assert exc_info.value.code == 0
+    out = capsys.readouterr().out
+    env_names = [
+        value for name, value in vars(config).items() if name.startswith("ENV_") and isinstance(value, str)
+    ]
+    assert env_names, "ENV_*-константы не найдены"
+    missing = [env for env in env_names if env not in out]
+    assert not missing, f"--help не упоминает: {missing}"
+
+
+def test_cli_unknown_argument_does_not_start_server(no_credentials, capsys):
+    from yandex_search_mcp.__main__ import main
+
+    with pytest.raises(SystemExit) as exc_info:
+        main(["--bogus"])
+    assert exc_info.value.code == 2
+    assert "unrecognized arguments: --bogus" in capsys.readouterr().err
