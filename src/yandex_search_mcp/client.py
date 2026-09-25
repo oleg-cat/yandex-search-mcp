@@ -1,7 +1,13 @@
 """HTTP-клиент Yandex Search API v2: auth, таймауты, retry, типизированные ошибки.
 
+Клиент асинхронный: sync-инструмент FastMCP выполняется прямо в event loop и
+на время запроса (gen — до минут) блокирует ping, cancel и параллельные вызовы.
+
 Retry (tenacity): только 429 / 5xx / сетевые ошибки / таймауты, 3 попытки,
-экспоненциальный backoff с jitter. На 4xx (кроме 429) retry нет.
+экспоненциальный backoff с jitter. На 4xx (кроме 429) retry нет. Для gen
+сбои с неизвестным исходом (таймаут чтения, обрыв после отправки) не
+ретраятся: запрос мог уже обработаться и оплатиться, повтор утроит счёт.
+Retry-After от 429 учитывается; если он дольше MAX_RETRY_AFTER — не ждём.
 Api-Key никогда не попадает в сообщения ошибок и логи (ТЗ §11).
 """
 
@@ -10,7 +16,8 @@ from typing import Any
 
 import httpx
 from tenacity import (
-    retry,
+    AsyncRetrying,
+    RetryCallState,
     retry_if_exception,
     stop_after_attempt,
     wait_exponential_jitter,
@@ -28,6 +35,7 @@ MAX_ATTEMPTS = 3
 WAIT_WEB = wait_exponential_jitter(initial=1.0, max=8.0)
 WAIT_GEN = wait_exponential_jitter(initial=2.0, max=8.0)
 ERROR_BODY_SNIPPET_LEN = 300
+MAX_RETRY_AFTER = 10.0  # дольше ждать внутри одного вызова инструмента бессмысленно
 
 
 class YandexApiError(Exception):
@@ -35,6 +43,11 @@ class YandexApiError(Exception):
 
     error_type: str = "upstream"
     retryable: bool = False
+
+    def __init__(self, message: str, *, outcome_unknown: bool = False) -> None:
+        super().__init__(message)
+        # True — запрос ушёл, но ответа нет: API мог его выполнить (и выставить счёт)
+        self.outcome_unknown = outcome_unknown
 
 
 class AuthError(YandexApiError):
@@ -45,10 +58,14 @@ class AuthError(YandexApiError):
 
 
 class QuotaError(YandexApiError):
-    """429 — превышена квота или rps-лимит."""
+    """429 — превышена квота или rps-лимит; retry_after — из заголовка, если был."""
 
     error_type = "quota"
     retryable = True
+
+    def __init__(self, message: str, retry_after: float | None = None) -> None:
+        super().__init__(message)
+        self.retry_after = retry_after
 
 
 class BadRequestError(YandexApiError):
@@ -66,18 +83,49 @@ class UpstreamError(YandexApiError):
 
 
 class RequestTimeoutError(YandexApiError):
-    """Сетевая ошибка или таймаут запроса."""
+    """Таймаут соединения или чтения ответа."""
 
     error_type = "timeout"
     retryable = True
 
 
-def _is_retryable(exc: BaseException) -> bool:
-    return isinstance(exc, YandexApiError) and exc.retryable
+def _parse_retry_after(value: str | None) -> float | None:
+    """Retry-After в секундах (HTTP-date не поддерживаем — Яндекс его не шлёт)."""
+    if not value:
+        return None
+    try:
+        seconds = float(value)
+    except ValueError:
+        return None
+    return seconds if seconds >= 0 else None
+
+
+def _should_retry(exc: BaseException, *, retry_unknown_outcome: bool) -> bool:
+    """Ретраим только retryable; квоту с долгим Retry-After и (для gen) неизвестный исход — нет."""
+    if not isinstance(exc, YandexApiError) or not exc.retryable:
+        return False
+    if isinstance(exc, QuotaError) and exc.retry_after is not None and exc.retry_after > MAX_RETRY_AFTER:
+        return False
+    if exc.outcome_unknown and not retry_unknown_outcome:
+        return False
+    return True
+
+
+class _WaitRespectingRetryAfter:
+    """Пауза перед повтором: Retry-After из 429, если он был, иначе базовая стратегия."""
+
+    def __init__(self, fallback: Any) -> None:
+        self._fallback = fallback
+
+    def __call__(self, retry_state: RetryCallState) -> float:
+        exc = retry_state.outcome.exception() if retry_state.outcome else None
+        if isinstance(exc, QuotaError) and exc.retry_after is not None:
+            return exc.retry_after
+        return self._fallback(retry_state)
 
 
 class YandexSearchClient:
-    """Один переиспользуемый httpx.Client на процесс; методы по эндпоинтам API."""
+    """Один переиспользуемый httpx.AsyncClient на процесс; методы по эндпоинтам API."""
 
     def __init__(
         self,
@@ -91,7 +139,7 @@ class YandexSearchClient:
         self._api_key = api_key
         self._timeout_web = timeout_web
         self._timeout_gen = timeout_gen
-        self._http = httpx.Client(
+        self._http = httpx.AsyncClient(
             base_url=base_url,
             headers={"Authorization": f"Api-Key {api_key}", "Content-Type": "application/json"},
         )
@@ -99,24 +147,32 @@ class YandexSearchClient:
         self._wait_web = wait_web
         self._wait_gen = wait_gen
 
-    def close(self) -> None:
-        """Закрывает пул соединений (вызывается из lifespan сервера)."""
-        self._http.close()
+    async def aclose(self) -> None:
+        """Закрывает пул соединений (для встраивания и тестов; сервер держит пул весь процесс)."""
+        await self._http.aclose()
 
     def _redact(self, text: str) -> str:
         """Вычищает Api-Key из любого текста, который может уйти наружу."""
         return text.replace(self._api_key, "***")
 
-    def _post(self, path: str, body: dict[str, Any], timeout: float) -> httpx.Response:
+    async def _post(self, path: str, body: dict[str, Any], timeout: float) -> httpx.Response:
         """Один POST без retry: маппит статусы и сетевые ошибки на типизированные."""
         try:
-            response = self._http.post(path, json=body, timeout=timeout)
+            response = await self._http.post(path, json=body, timeout=timeout)
+        except httpx.ConnectTimeout as exc:
+            raise RequestTimeoutError(f"Could not connect to {path} within {timeout}s.") from exc
         except httpx.TimeoutException as exc:
-            raise RequestTimeoutError(f"Request to {path} timed out after {timeout}s.") from exc
+            raise RequestTimeoutError(
+                f"Request to {path} timed out after {timeout}s.", outcome_unknown=True
+            ) from exc
         except httpx.HTTPError as exc:
             # Не-таймаутные сетевые/протокольные сбои — upstream (тоже retryable).
+            # Ошибка соединения — запрос точно не ушёл; прочие — исход неизвестен.
             # Текст исключения httpx может содержать URL, но не заголовки; чистим защитно
-            raise UpstreamError(f"Network error on {path}: {self._redact(str(exc))}") from exc
+            raise UpstreamError(
+                f"Network error on {path}: {self._redact(str(exc))}",
+                outcome_unknown=not isinstance(exc, httpx.ConnectError),
+            ) from exc
 
         if response.status_code == 200:
             return response
@@ -129,35 +185,56 @@ class YandexSearchClient:
                 f"(scope yc.search-api.execute) and folder roles (search-api.editor). API said: {snippet}"
             )
         if status == 429:
-            raise QuotaError(f"Yandex Search API quota/rate limit exceeded (429). API said: {snippet}")
+            retry_after = _parse_retry_after(response.headers.get("Retry-After"))
+            hint = f" Retry after {retry_after:g}s." if retry_after is not None else ""
+            raise QuotaError(
+                f"Yandex Search API quota/rate limit exceeded (429).{hint} API said: {snippet}",
+                retry_after=retry_after,
+            )
         if 400 <= status < 500:
             # Любой 4xx, кроме 429, — ошибка запроса: retry бессмыслен (контракт §9)
             raise BadRequestError(f"Yandex Search API rejected the request ({status}). API said: {snippet}")
         raise UpstreamError(f"Yandex Search API server error ({status}). API said: {snippet}")
 
-    def _post_with_retry(self, path: str, body: dict[str, Any], timeout: float, wait: Any) -> httpx.Response:
-        @retry(
-            retry=retry_if_exception(_is_retryable),
+    async def _post_with_retry(
+        self, path: str, body: dict[str, Any], timeout: float, wait: Any, *, retry_unknown_outcome: bool
+    ) -> httpx.Response:
+        retrying = AsyncRetrying(
+            retry=retry_if_exception(
+                lambda exc: _should_retry(exc, retry_unknown_outcome=retry_unknown_outcome)
+            ),
             stop=stop_after_attempt(MAX_ATTEMPTS),
-            wait=wait,
+            wait=_WaitRespectingRetryAfter(wait),
             reraise=True,
         )
-        def _call() -> httpx.Response:
-            return self._post(path, body, timeout)
+        async for attempt in retrying:
+            with attempt:
+                return await self._post(path, body, timeout)
+        raise AssertionError("unreachable: tenacity either returns or reraises")
 
-        return _call()
-
-    def web_search(self, body: dict[str, Any]) -> dict[str, Any]:
+    async def web_search(self, body: dict[str, Any]) -> dict[str, Any]:
         """POST /v2/web/search → конверт ответа (JSON с base64 rawData)."""
         logger.debug("POST %s", WEB_SEARCH_PATH)
-        return self._post_with_retry(WEB_SEARCH_PATH, body, self._timeout_web, self._wait_web).json()
+        response = await self._post_with_retry(
+            WEB_SEARCH_PATH, body, self._timeout_web, self._wait_web, retry_unknown_outcome=True
+        )
+        return response.json()
 
-    def image_search(self, body: dict[str, Any]) -> dict[str, Any]:
+    async def image_search(self, body: dict[str, Any]) -> dict[str, Any]:
         """POST /v2/image/search → конверт ответа (JSON с base64 rawData)."""
         logger.debug("POST %s", IMAGE_SEARCH_PATH)
-        return self._post_with_retry(IMAGE_SEARCH_PATH, body, self._timeout_web, self._wait_web).json()
+        response = await self._post_with_retry(
+            IMAGE_SEARCH_PATH, body, self._timeout_web, self._wait_web, retry_unknown_outcome=True
+        )
+        return response.json()
 
-    def gen_search(self, body: dict[str, Any]) -> str:
-        """POST /v2/gen/search → сырое тело ответа (форму разбирает parsing)."""
+    async def gen_search(self, body: dict[str, Any]) -> str:
+        """POST /v2/gen/search → сырое тело ответа (форму разбирает parsing).
+
+        Сбой с неизвестным исходом не ретраится: дорогой запрос мог уже оплатиться.
+        """
         logger.debug("POST %s", GEN_SEARCH_PATH)
-        return self._post_with_retry(GEN_SEARCH_PATH, body, self._timeout_gen, self._wait_gen).text
+        response = await self._post_with_retry(
+            GEN_SEARCH_PATH, body, self._timeout_gen, self._wait_gen, retry_unknown_outcome=False
+        )
+        return response.text

@@ -49,6 +49,7 @@ class FakeClient:
     def __init__(self, web=None, image=None, gen=None, error=None):
         self._web, self._image, self._gen, self._error = web, image, gen, error
         self.bodies: list[dict] = []
+        self.closed = False
 
     def _respond(self, body, value):
         self.bodies.append(body)
@@ -57,17 +58,17 @@ class FakeClient:
         assert value is not None, "инструмент не должен был дойти до HTTP-вызова"
         return value
 
-    def web_search(self, body):
+    async def web_search(self, body):
         return self._respond(body, self._web)
 
-    def image_search(self, body):
+    async def image_search(self, body):
         return self._respond(body, self._image)
 
-    def gen_search(self, body):
+    async def gen_search(self, body):
         return self._respond(body, self._gen)
 
-    def close(self):
-        pass
+    async def aclose(self):
+        self.closed = True
 
 
 # --- body-builders: web (ТЗ §8.1) ---
@@ -163,16 +164,44 @@ def test_image_body_no_spec_when_no_filters():
 
 
 def test_gen_body_structure_and_site_host_oneof():
-    body = build_gen_body(query="вопрос", search_type="ru", site="habr.com", host=None, folder_id="fid")
+    body = build_gen_body(query="вопрос", search_type="ru", site="habr.com", folder_id="fid")
     assert body["messages"] == [{"content": "вопрос", "role": "ROLE_USER"}]
     assert body["searchType"] == "SEARCH_TYPE_RU"
     assert body["site"] == {"site": ["habr.com"]}
+    assert body["fixMisspell"] is True
+    assert "searchFilters" not in body
 
-    body = build_gen_body(query="q", search_type="com", site=None, host="h.ru", folder_id="fid")
-    assert body["host"] == {"host": ["h.ru"]}
+    body = build_gen_body(query="q", search_type="com", host=["h.ru", "g.ru"], folder_id="fid")
+    assert body["host"] == {"host": ["h.ru", "g.ru"]}
 
-    with pytest.raises(ToolError):
-        build_gen_body(query="q", search_type="ru", site="a", host="b", folder_id="fid")
+    body = build_gen_body(query="q", search_type="ru", url="https://a.ru/p", folder_id="fid")
+    assert body["url"] == {"url": ["https://a.ru/p"]}
+
+    for kwargs in ({"site": "a", "host": "b"}, {"site": "a", "url": "b"}, {"host": "a", "url": "b"}):
+        with pytest.raises(ToolError):
+            build_gen_body(query="q", search_type="ru", folder_id="fid", **kwargs)
+
+
+def test_gen_body_scope_limits():
+    build_gen_body(query="q", search_type="ru", folder_id="fid", site=[f"s{i}.ru" for i in range(5)])
+    with pytest.raises(ToolError, match="at most 5"):
+        build_gen_body(query="q", search_type="ru", folder_id="fid", site=[f"s{i}.ru" for i in range(6)])
+    with pytest.raises(ToolError, match="at most 10"):
+        build_gen_body(query="q", search_type="ru", folder_id="fid", url=[f"https://a/{i}" for i in range(11)])
+
+
+def test_gen_body_typos_and_filters():
+    body = build_gen_body(
+        query="q",
+        search_type="ru",
+        folder_id="fid",
+        fix_typos=False,
+        date=">20250101",
+        lang="en",
+        doc_format="pdf",
+    )
+    assert body["fixMisspell"] is False
+    assert body["searchFilters"] == [{"date": ">20250101"}, {"lang": "en"}, {"format": "DOC_FORMAT_PDF"}]
 
 
 # --- сервер: whitelist, контракты, ошибки ---
@@ -255,3 +284,65 @@ def test_query_length_validated_before_http_call():
     with pytest.raises(ToolError):
         asyncio.run(mcp.call_tool("yandex_web_search", {"query": "х" * 401}))
     assert client.bodies == []  # fail-fast: сетевого вызова не было
+
+
+def test_gen_tool_passes_new_params_to_body():
+    raw = (FIXTURES / "gen_raw_response.txt").read_text(encoding="utf-8")
+    client = FakeClient(gen=raw)
+    mcp = build_server(SETTINGS, client)
+    _, structured = asyncio.run(
+        mcp.call_tool(
+            "yandex_gen_search",
+            {"query": "Что такое MCP?", "fix_typos": False, "site": ["habr.com", "vc.ru"], "lang": "ru"},
+        )
+    )
+    assert client.bodies[0]["fixMisspell"] is False
+    assert client.bodies[0]["site"] == {"site": ["habr.com", "vc.ru"]}
+    assert client.bodies[0]["searchFilters"] == [{"lang": "ru"}]
+    assert structured["search_queries"]
+
+
+def test_unexpected_error_is_logged_and_wrapped(caplog):
+    mcp = build_server(SETTINGS, FakeClient(error=RuntimeError("boom")))
+    with pytest.raises(ToolError) as exc_info:
+        asyncio.run(mcp.call_tool("yandex_web_search", {"query": "q"}))
+    assert '"type": "upstream"' in str(exc_info.value)
+    assert "Unexpected error in tool call" in caplog.text
+    assert "RuntimeError: boom" in caplog.text  # traceback попал в лог
+
+
+class SlowClient(FakeClient):
+    """Имитирует медленный API без блокировки event loop."""
+
+    async def web_search(self, body):
+        await asyncio.sleep(0.3)
+        return _envelope("web_ru_normal.xml")
+
+
+def test_tool_calls_run_concurrently():
+    """Инструменты async: три параллельных вызова идут одновременно, а не по очереди."""
+    mcp = build_server(SETTINGS, SlowClient())
+
+    async def run_three():
+        loop = asyncio.get_running_loop()
+        start = loop.time()
+        await asyncio.gather(*(mcp.call_tool("yandex_web_search", {"query": "q"}) for _ in range(3)))
+        return loop.time() - start
+
+    assert asyncio.run(run_three()) < 0.6  # последовательно было бы >= 0.9
+
+
+def test_client_survives_session_lifespans():
+    """В HTTP-режиме lifespan входится на каждую сессию: общий клиент не должен закрываться."""
+    client = FakeClient(web=_envelope("web_ru_normal.xml"))
+    mcp = build_server(SETTINGS, client)
+    lowlevel = mcp._mcp_server
+
+    async def two_sessions():
+        for _ in range(2):
+            async with lowlevel.lifespan(lowlevel):
+                await mcp.call_tool("yandex_web_search", {"query": "q"})
+
+    asyncio.run(two_sessions())
+    assert client.closed is False
+    assert len(client.bodies) == 2

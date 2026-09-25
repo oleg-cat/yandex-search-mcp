@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: ["3.11", "3.12"]
+        python-version: ["3.11", "3.12", "3.13"]
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -26,3 +26,17 @@ jobs:
           ruff format --check src tests scripts
       - name: Test
         run: pytest -q
+
+  docker:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build image
+        run: docker build -t yandex-search-mcp .
+      - name: Fails fast without credentials
+        run: |
+          set +e
+          docker run --rm yandex-search-mcp 2> err.txt
+          code=$?
+          cat err.txt
+          test "$code" -eq 1 && grep -q YANDEX_SEARCH_API_KEY err.txt

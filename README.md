@@ -2,7 +2,7 @@
 
 [По-русски → README.ru.md](README.ru.md)
 
-Self-hosted MCP server for **Yandex Search API v2**: web search, image search, and generative search (AI answer with cited sources). Built for Russian-language search (all 6 Yandex indexes: ru/com/tr/kk/be/uz), STDIO transport, fully typed tool parameters, structured output.
+Self-hosted MCP server for **Yandex Search API v2**: web search, image search, and generative search (AI answer with cited sources). Built for Russian-language search (all 6 Yandex indexes: ru/com/tr/kk/be/uz), STDIO or Streamable HTTP transport, fully typed tool parameters, structured output.
 
 Works with **Claude Code**, **Codex CLI**, and **opencode** (any MCP client with stdio support).
 
@@ -37,8 +37,18 @@ API docs: [Search API v2](https://yandex.cloud/en/docs/search-api/) · [REST ref
 
 Requires Python ≥ 3.11.
 
+**Fastest — no clone, via [uv](https://docs.astral.sh/uv/):**
+
 ```bash
-git clone https://github.com/<you>/yandex-search-mcp.git
+YANDEX_SEARCH_API_KEY=<key> YANDEX_FOLDER_ID=<folder> uvx --from git+https://github.com/oleg-cat/yandex-search-mcp yandex-search-mcp
+```
+
+With a client: `claude mcp add yandex-search -e YANDEX_SEARCH_API_KEY=<key> -e YANDEX_FOLDER_ID=<folder> -- uvx --from git+https://github.com/oleg-cat/yandex-search-mcp yandex-search-mcp`.
+
+**From source:**
+
+```bash
+git clone https://github.com/oleg-cat/yandex-search-mcp.git
 cd yandex-search-mcp
 python3.12 -m venv .venv
 .venv/bin/pip install -r requirements.txt
@@ -117,20 +127,37 @@ docker run -i --rm \
   yandex-search-mcp
 ```
 
-The container speaks STDIO (`-i` is required); there is no HTTP port and no healthcheck by design.
+The container speaks STDIO by default (`-i` is required). For a long-running shared server use HTTP mode:
+
+```bash
+docker run --rm -p 8000:8000 \
+  -e YANDEX_MCP_TRANSPORT=http -e YANDEX_MCP_HOST=0.0.0.0 \
+  -e YANDEX_SEARCH_API_KEY_FILE=/run/secrets/yandex_key -v ./yandex_key:/run/secrets/yandex_key:ro \
+  -e YANDEX_FOLDER_ID=<folder> \
+  yandex-search-mcp
+# MCP endpoint: http://localhost:8000/mcp
+```
+
+## HTTP transport
+
+`YANDEX_MCP_TRANSPORT=http` serves MCP Streamable HTTP at `http://<host>:<port>/mcp` (default `127.0.0.1:8000`). On localhost DNS-rebinding protection is on automatically. The endpoint has **no authentication** — bind to `0.0.0.0` only behind a reverse proxy or inside a private network, since anyone who reaches it spends your Yandex quota.
 
 ## Environment variables
 
 | Variable | Required | Default | Description |
 |---|---|---|---|
-| `YANDEX_SEARCH_API_KEY` | yes | — | Api-Key (scope `yc.search-api.execute`) |
+| `YANDEX_SEARCH_API_KEY` | yes* | — | Api-Key (scope `yc.search-api.execute`) |
+| `YANDEX_SEARCH_API_KEY_FILE` | no | — | *Alternative: path to a file with the key (Docker/K8s secrets) |
 | `YANDEX_FOLDER_ID` | yes | — | Folder ID (role `search-api.editor`) |
-| `YANDEX_MCP_ENABLED_TOOLS` | no | all | Space-separated tool whitelist, e.g. `"yandex_web_search"` |
+| `YANDEX_MCP_ENABLED_TOOLS` | no | all | Tool whitelist, space- or comma-separated, e.g. `"yandex_web_search"` |
+| `YANDEX_MCP_DISABLED_TOOLS` | no | — | Tool blacklist, applied after the whitelist, e.g. `"yandex_gen_search"` |
 | `YANDEX_MCP_DEFAULT_SEARCH_TYPE` | no | `ru` | Default index: `ru/com/tr/kk/be/uz` |
 | `YANDEX_MCP_DEFAULT_REGION` | no | — | Default geo-id (225 = Russia, 213 = Moscow) |
 | `YANDEX_MCP_TIMEOUT_WEB` | no | `15` | Web/image request timeout, seconds |
 | `YANDEX_MCP_TIMEOUT_GEN` | no | `120` | Gen request timeout, seconds |
 | `YANDEX_MCP_LOG_LEVEL` | no | `INFO` | Log level (logs go to stderr only) |
+| `YANDEX_MCP_TRANSPORT` | no | `stdio` | `stdio` or `http` (Streamable HTTP) |
+| `YANDEX_MCP_HOST` / `YANDEX_MCP_PORT` | no | `127.0.0.1` / `8000` | HTTP bind address |
 
 ## Tool parameters
 
@@ -172,9 +199,14 @@ Returns: `{query, found, page, has_more, results[{rank, image_url, format, width
 |---|---|---|
 | `query` | str | The question |
 | `search_type` | as above | Index |
-| `site` / `host` | str | Restrict sources to a domain (mutually exclusive) |
+| `site` / `host` | str or list, ≤ 5 | Restrict sources to sites (with subdomains) / exact hosts |
+| `url` | str or list, ≤ 10 | Restrict sources to exact pages. `site`, `host`, `url` are mutually exclusive |
+| `fix_typos` | bool, default true | Yandex typo correction; set `false` for code, product names, jargon (it once turned "MCP" into "TCP") |
+| `date` | str | Document date filter in `date:` operator syntax without the prefix, e.g. `>20250101` |
+| `lang` | str | Document language, ISO 639-1 (`ru`, `en`) |
+| `doc_format` | `pdf/doc/rtf/xls/ods/ppt/odp/odt/odg/swf` | Document file format |
 
-Returns: `{answer, sources[{url, title, used}], is_answer_rejected, fixed_misspell_query}`. Quota is **1 request/second**; responses take tens of seconds.
+Returns: `{answer, sources[{url, title, used}], search_queries, is_answer_rejected, is_bullet_answer, problematic_answer, fixed_misspell_query}`. Quota is **1 request/second**; responses take tens of seconds.
 
 ## Quotas
 
@@ -185,7 +217,7 @@ Defaults ([current limits](https://aistudio.yandex.ru/docs/en/search-api/concept
 | web / image | 10 | 10,000 |
 | gen | 1 | 1,000 |
 
-The server retries 429 and 5xx (3 attempts, exponential backoff) but does not work around quotas.
+The server retries 429 and 5xx (3 attempts, exponential backoff, honoring `Retry-After` up to 10 s) but does not work around quotas. Generative search is **never** re-sent after a read timeout or a dropped connection — the request may already have been processed and billed.
 
 ## Troubleshooting
 
@@ -201,7 +233,7 @@ The server retries 429 and 5xx (3 attempts, exponential backoff) but does not wo
 
 ```bash
 .venv/bin/pip install -e ".[dev]"
-make check          # ruff check + ruff format --check + pytest (49 tests on live fixtures)
+make check          # ruff check + ruff format --check + pytest (67 tests on live fixtures)
 ```
 
 Fixtures are re-captured with `scripts/capture_fixtures.py` (reads credentials from env or a local `keys.json`, which is gitignored).

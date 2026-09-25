@@ -4,6 +4,7 @@ import json
 from pathlib import Path
 
 import pytest
+from defusedxml import ElementTree as DET
 
 from yandex_search_mcp.models import ParseError, YandexXmlError
 from yandex_search_mcp.parsing import (
@@ -107,11 +108,25 @@ def test_modtime_to_iso():
     assert _modtime_to_iso(None) is None
 
 
+def _response_el(found: int, grouping_found: int | None = None):
+    grouping = f'<found priority="all">{grouping_found}</found>' if grouping_found is not None else ""
+    return DET.fromstring(
+        f'<response><found priority="all">{found}</found>'
+        f"<results><grouping>{grouping}</grouping></results></response>"
+    )
+
+
 def test_has_more_logic():
-    assert _has_more(found=100, page=0, n_results=10, returned=10) is True
-    assert _has_more(found=100, page=0, n_results=10, returned=7) is False  # неполная страница
-    assert _has_more(found=10, page=0, n_results=10, returned=10) is False  # found исчерпан
-    assert _has_more(found=25, page=2, n_results=10, returned=10) is False  # 25 <= 30
+    assert _has_more(_response_el(100), page=0, n_results=10, returned=10) is True
+    assert _has_more(_response_el(100), page=0, n_results=10, returned=7) is False  # неполная страница
+    assert _has_more(_response_el(10), page=0, n_results=10, returned=10) is False  # found исчерпан
+    assert _has_more(_response_el(25), page=2, n_results=10, returned=10) is False  # 25 <= 30
+
+
+def test_has_more_uses_group_count_when_present():
+    """При dedupe_by_domain групп (доменов) меньше, чем документов: считаем по группам."""
+    assert _has_more(_response_el(100_000, grouping_found=15), page=1, n_results=10, returned=10) is False
+    assert _has_more(_response_el(100_000, grouping_found=25), page=1, n_results=10, returned=10) is True
 
 
 # --- image ---
@@ -173,6 +188,8 @@ def test_gen_live_fixture_array_form():
     assert all(s.url.startswith("http") for s in resp.sources)
     assert resp.is_answer_rejected is False
     assert resp.fixed_misspell_query  # API «поправил» MCP→TCP — поле прозрачности
+    assert resp.search_queries == ["что такое протокол tcp model context protocol"]
+    assert resp.is_bullet_answer is False and resp.problematic_answer is False
 
 
 def test_gen_accepts_single_object_too():

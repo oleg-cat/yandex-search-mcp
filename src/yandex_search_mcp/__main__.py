@@ -1,4 +1,6 @@
-"""Точка входа: python -m yandex_search_mcp (STDIO-транспорт).
+"""Точка входа: `yandex-search-mcp` или `python -m yandex_search_mcp`.
+
+Транспорт — STDIO по умолчанию или Streamable HTTP (YANDEX_MCP_TRANSPORT=http).
 
 Конфигурация валидируется ДО старта сервера: при отсутствии обязательных
 переменных — внятная ошибка в stderr и ненулевой код выхода (ТЗ §7, §14).
@@ -26,7 +28,8 @@ def main() -> None:
         timeout_gen=settings.timeout_gen,
     )
     server = build_server(settings, client)
-    server.run()  # STDIO по умолчанию; stdout занят протоколом, логи — в stderr
+    # В STDIO stdout занят протоколом, поэтому логи — только в stderr
+    server.run(transport="streamable-http" if settings.transport == "http" else "stdio")
 
 
 if __name__ == "__main__":

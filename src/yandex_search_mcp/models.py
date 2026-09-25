@@ -95,3 +95,12 @@ class GenSearchResponse(BaseModel):
     fixed_misspell_query: str | None = Field(
         default=None, description="Query after Yandex typo correction, null if unchanged"
     )
+    search_queries: list[str] = Field(
+        default_factory=list, description="Search queries Yandex actually ran to build the answer"
+    )
+    is_bullet_answer: bool = Field(
+        default=False, description="True when Yandex returned a list of facts instead of a coherent answer"
+    )
+    problematic_answer: bool = Field(
+        default=False, description="True when Yandex flagged the answer as possibly inappropriate"
+    )

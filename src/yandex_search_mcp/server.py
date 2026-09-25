@@ -2,12 +2,12 @@
 
 Body-builders — чистые функции (тестируются без HTTP). Ошибки — единым
 контрактом ТЗ §10: ToolError с JSON-телом {"error": {type, message, retryable}}.
-Инструменты регистрируются по whitelist из настроек (YANDEX_MCP_ENABLED_TOOLS).
+Инструменты регистрируются по whitelist/blacklist из настроек.
+Инструменты асинхронные: sync-функция FastMCP блокировала бы event loop.
 """
 
 import json
-from collections.abc import AsyncIterator
-from contextlib import asynccontextmanager
+import logging
 from typing import Annotated, Any, Literal
 
 from mcp.server.fastmcp import FastMCP
@@ -25,6 +25,8 @@ from .models import (
     YandexXmlError,
 )
 from .parsing import decode_raw_data, parse_gen_response, parse_image_xml, parse_web_xml
+
+logger = logging.getLogger(__name__)
 
 SearchType = Literal["ru", "com", "tr", "kk", "be", "uz"]
 Localization = Literal["ru", "uk", "be", "kk", "tr", "en"]
@@ -105,6 +107,11 @@ IMAGE_COLOR_MAP: dict[str, str] = {
     )
 }
 
+DocFormat = Literal["pdf", "doc", "rtf", "xls", "ods", "ppt", "odp", "odt", "odg", "swf"]
+DOC_FORMAT_MAP: dict[str, str] = {fmt: f"DOC_FORMAT_{fmt.upper()}" for fmt in DocFormat.__args__}
+# Лимиты API (GenSearchRequest в cloudapi/searchapi/v2): site/host ≤ 5, url ≤ 10
+GEN_SCOPE_LIMITS: dict[str, int] = {"site": 5, "host": 5, "url": 10}
+
 READ_ONLY = ToolAnnotations(readOnlyHint=True, idempotentHint=True, openWorldHint=True)
 
 WEB_SEARCH_DESCRIPTION = """Search the web with Yandex Search — the strongest engine for \
@@ -145,10 +152,11 @@ When to use: complex questions where a digest of several sources should be retur
 When NOT to use: quick fact checks, link/page/image lookup — use yandex_web_search or \
 yandex_image_search.
 
-Returns JSON: answer (markdown), sources[] with 'used' flags, is_answer_rejected (true when \
-Yandex refused to answer), fixed_misspell_query (note: typo correction is aggressive and may \
-distort technical terms — check this field if the answer looks off-topic). Use site/host to \
-restrict sources to specific domains."""
+Returns JSON: answer (markdown), sources[] with 'used' flags, search_queries Yandex actually ran, \
+is_answer_rejected (true when Yandex refused to answer), fixed_misspell_query. Typo correction is \
+aggressive and may distort technical terms — pass fix_typos=false for code, product names or \
+jargon. Restrict sources with site / host (up to 5) or url (up to 10 exact pages) — one of the \
+three; filter documents with date, lang (ISO 639-1) and doc_format."""
 
 
 def _resolve_localization(search_type: str, localization: str | None) -> str | None:
@@ -246,27 +254,57 @@ def build_image_body(
     return body
 
 
+def _as_list(value: str | list[str] | None) -> list[str]:
+    """Одна строка или список строк → список (агенты передают и так, и так)."""
+    if value is None:
+        return []
+    return [value] if isinstance(value, str) else list(value)
+
+
 def build_gen_body(
     *,
     query: str,
     search_type: str,
-    site: str | None,
-    host: str | None,
     folder_id: str,
+    site: str | list[str] | None = None,
+    host: str | list[str] | None = None,
+    url: str | list[str] | None = None,
+    fix_typos: bool = True,
+    date: str | None = None,
+    lang: str | None = None,
+    doc_format: str | None = None,
 ) -> dict[str, Any]:
-    """Тело POST /v2/gen/search. site и host — взаимоисключающие (oneof в API)."""
-    if site is not None and host is not None:
-        raise ToolError(_error_json("bad_request", "Pass either 'site' or 'host', not both.", False))
+    """Тело POST /v2/gen/search. site / host / url — взаимоисключающие (oneof в API)."""
+    scopes = {name: _as_list(value) for name, value in (("site", site), ("host", host), ("url", url))}
+    given = [name for name, values in scopes.items() if values]
+    if len(given) > 1:
+        raise ToolError(
+            _error_json(
+                "bad_request", f"Pass only one of 'site', 'host', 'url' (got {', '.join(given)}).", False
+            )
+        )
     body: dict[str, Any] = {
         "messages": [{"content": query, "role": "ROLE_USER"}],
         "searchType": SEARCH_TYPE_MAP[search_type],
-        "fixMisspell": True,
+        "fixMisspell": fix_typos,
         "folderId": folder_id,
     }
-    if site is not None:
-        body["site"] = {"site": [site]}
-    if host is not None:
-        body["host"] = {"host": [host]}
+    if given:
+        name = given[0]
+        if len(scopes[name]) > GEN_SCOPE_LIMITS[name]:
+            raise ToolError(
+                _error_json("bad_request", f"'{name}' accepts at most {GEN_SCOPE_LIMITS[name]} values.", False)
+            )
+        body[name] = {name: scopes[name]}
+    filters: list[dict[str, str]] = []
+    if date is not None:
+        filters.append({"date": date})
+    if lang is not None:
+        filters.append({"lang": lang})
+    if doc_format is not None:
+        filters.append({"format": DOC_FORMAT_MAP[doc_format]})
+    if filters:
+        body["searchFilters"] = filters
     return body
 
 
@@ -284,20 +322,18 @@ def _as_tool_error(exc: Exception) -> ToolError:
         return exc  # уже отформатирован — не оборачивать повторно
     if isinstance(exc, (YandexApiError, ParseError, YandexXmlError)):
         return ToolError(_error_json(exc.error_type, str(exc), exc.retryable))
+    # Баг сервера, а не API: traceback в лог (stderr), агенту — короткий контракт
+    logger.exception("Unexpected error in tool call")
     return ToolError(_error_json("upstream", f"Unexpected error: {exc}", False))
 
 
 def build_server(settings: Settings, client: YandexSearchClient) -> FastMCP:
     """Собирает FastMCP-сервер, регистрируя инструменты по whitelist настроек."""
 
-    @asynccontextmanager
-    async def lifespan(_: FastMCP) -> AsyncIterator[None]:
-        try:
-            yield
-        finally:
-            client.close()
-
-    mcp = FastMCP("yandex-search", lifespan=lifespan)
+    # Клиент НЕ закрывается в lifespan: в HTTP-режиме FastMCP входит в lifespan на каждую
+    # сессию, и закрытие общего пула ломало бы все следующие сессии. Пул живёт весь процесс.
+    # host/port нужны только HTTP-транспорту; для STDIO игнорируются
+    mcp = FastMCP("yandex-search", host=settings.http_host, port=settings.http_port)
 
     QueryParam = Annotated[
         str,
@@ -321,7 +357,7 @@ def build_server(settings: Settings, client: YandexSearchClient) -> FastMCP:
     if "yandex_web_search" in settings.enabled_tools:
 
         @mcp.tool(description=WEB_SEARCH_DESCRIPTION, annotations=READ_ONLY)
-        def yandex_web_search(
+        async def yandex_web_search(
             query: QueryParam,
             search_type: SearchTypeParam = None,
             n_results: Annotated[
@@ -375,7 +411,7 @@ def build_server(settings: Settings, client: YandexSearchClient) -> FastMCP:
                 folder_id=settings.folder_id,
             )
             try:
-                envelope = client.web_search(body)
+                envelope = await client.web_search(body)
                 return parse_web_xml(decode_raw_data(envelope), query=query, page=page, n_results=n_results)
             except Exception as exc:
                 raise _as_tool_error(exc) from exc
@@ -383,7 +419,7 @@ def build_server(settings: Settings, client: YandexSearchClient) -> FastMCP:
     if "yandex_image_search" in settings.enabled_tools:
 
         @mcp.tool(description=IMAGE_SEARCH_DESCRIPTION, annotations=READ_ONLY)
-        def yandex_image_search(
+        async def yandex_image_search(
             query: QueryParam,
             search_type: SearchTypeParam = None,
             n_results: Annotated[
@@ -443,7 +479,7 @@ def build_server(settings: Settings, client: YandexSearchClient) -> FastMCP:
                 folder_id=settings.folder_id,
             )
             try:
-                envelope = client.image_search(body)
+                envelope = await client.image_search(body)
                 return parse_image_xml(decode_raw_data(envelope), query=query, page=page, n_results=n_results)
             except Exception as exc:
                 raise _as_tool_error(exc) from exc
@@ -451,25 +487,58 @@ def build_server(settings: Settings, client: YandexSearchClient) -> FastMCP:
     if "yandex_gen_search" in settings.enabled_tools:
 
         @mcp.tool(description=GEN_SEARCH_DESCRIPTION, annotations=READ_ONLY)
-        def yandex_gen_search(
+        async def yandex_gen_search(
             query: Annotated[str, Field(min_length=1, max_length=16384, description="Question to answer.")],
             search_type: SearchTypeParam = None,
             site: Annotated[
-                str | None, Field(description="Restrict sources to this site (mutually exclusive with host).")
+                str | list[str] | None,
+                Field(description="Restrict sources to these sites incl. subdomains, up to 5 (e.g. habr.com)."),
             ] = None,
             host: Annotated[
-                str | None, Field(description="Restrict sources to this host (mutually exclusive with site).")
+                str | list[str] | None,
+                Field(description="Restrict sources to these exact hosts, up to 5 (e.g. docs.python.org)."),
+            ] = None,
+            url: Annotated[
+                str | list[str] | None,
+                Field(description="Restrict sources to these exact page URLs, up to 10."),
+            ] = None,
+            fix_typos: Annotated[
+                bool,
+                Field(description="Let Yandex auto-correct typos; set false for code/product names/jargon."),
+            ] = True,
+            date: Annotated[
+                str | None,
+                Field(
+                    max_length=25,
+                    description="Document date filter in Yandex date: operator syntax without the prefix, "
+                    "e.g. '>20250101' or '20250101..20250331'.",
+                ),
+            ] = None,
+            lang: Annotated[
+                str | None,
+                Field(
+                    pattern=r"^[a-z]{2}$",
+                    description="Only documents in this language (ISO 639-1, e.g. ru, en).",
+                ),
+            ] = None,
+            doc_format: Annotated[
+                DocFormat | None, Field(description="Only documents of this file format (e.g. pdf).")
             ] = None,
         ) -> GenSearchResponse:
             body = build_gen_body(
                 query=query,
                 search_type=search_type or settings.default_search_type,
+                folder_id=settings.folder_id,
                 site=site,
                 host=host,
-                folder_id=settings.folder_id,
+                url=url,
+                fix_typos=fix_typos,
+                date=date,
+                lang=lang,
+                doc_format=doc_format,
             )
             try:
-                raw = client.gen_search(body)
+                raw = await client.gen_search(body)
                 return parse_gen_response(raw)
             except Exception as exc:
                 raise _as_tool_error(exc) from exc

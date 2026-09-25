@@ -3,7 +3,8 @@
 Парсер написан по живым фикстурам tests/fixtures/ (ground truth, ТЗ §12.1):
 - пустая выдача приходит как <error code="15"> внутри XML, а не пустой <results>;
 - исправление опечаток приходит элементом <reask> (rule=Misspell), <misspell> — резерв;
-- <found priority="..."> есть и в <response>, и в <grouping> — берём только из <response>;
+- <found priority="..."> есть и в <response> (оценка всех документов — поле found), и в
+  <grouping> (число доступных групп — по нему считается has_more);
 - gen-ответ — JSON-МАССИВ объектов (отсюда хак [1:-1] в официальном демо);
 - XML — только defusedxml: содержимое приходит из недоверенного веба (ТЗ §11).
 """
@@ -96,9 +97,11 @@ def _decode_idna_domain(domain: str) -> str:
         return domain
 
 
-def _found_count(response: Element) -> int:
-    """Счётчик найденного: строжайший доступный priority, только из <response>."""
-    by_priority = {f.get("priority"): (f.text or "0") for f in response.findall("found")}
+def _found_count(node: Element | None) -> int:
+    """Счётчик <found> прямых потомков узла: строжайший доступный priority."""
+    if node is None:
+        return 0
+    by_priority = {f.get("priority"): (f.text or "0") for f in node.findall("found")}
     for priority in FOUND_PRIORITY_ORDER:
         if priority in by_priority:
             try:
@@ -138,9 +141,17 @@ def _modtime_to_iso(raw: str | None) -> str | None:
         return None
 
 
-def _has_more(found: int, page: int, n_results: int, returned: int) -> bool:
-    """Есть ли следующая страница: страница полна И оценка found её обещает."""
-    return returned == n_results and found > (page + 1) * n_results
+def _has_more(response: Element, page: int, n_results: int, returned: int) -> bool:
+    """Есть ли следующая страница: страница полна И счётчик групп её обещает.
+
+    Пагинация идёт по группам (при dedupe_by_domain группа = домен), поэтому
+    берём <found> из <grouping>; если его нет — оценку документов из <response>.
+    """
+    grouping = response.find("results/grouping")
+    available = _found_count(grouping) if grouping is not None and grouping.find("found") is not None else 0
+    if not available:
+        available = _found_count(response)
+    return returned == n_results and available > (page + 1) * n_results
 
 
 def parse_web_xml(xml_bytes: bytes, query: str, page: int, n_results: int) -> WebSearchResponse:
@@ -179,7 +190,7 @@ def parse_web_xml(xml_bytes: bytes, query: str, page: int, n_results: int) -> We
         corrected_query=_corrected_query(response),
         found=found,
         page=page,
-        has_more=_has_more(found, page, n_results, len(docs)),
+        has_more=_has_more(response, page, n_results, len(docs)),
         results=results,
     )
 
@@ -213,7 +224,7 @@ def parse_image_xml(xml_bytes: bytes, query: str, page: int, n_results: int) -> 
         query=query,
         found=found,
         page=page,
-        has_more=_has_more(found, page, n_results, len(docs)),
+        has_more=_has_more(response, page, n_results, len(docs)),
         results=results,
     )
 
@@ -251,4 +262,7 @@ def parse_gen_response(raw_text: str) -> GenSearchResponse:
         sources=sources,
         is_answer_rejected=bool(payload.get("isAnswerRejected", False)),
         fixed_misspell_query=payload.get("fixedMisspellQuery") or None,
+        search_queries=[q["text"] for q in payload.get("searchQueries", []) if q.get("text")],
+        is_bullet_answer=bool(payload.get("isBulletAnswer", False)),
+        problematic_answer=bool(payload.get("problematicAnswer", False)),
     )

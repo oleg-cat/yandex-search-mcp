@@ -3,6 +3,24 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.2.0] — 2026-09-25
+
+### Fixed
+
+- Tools are now `async` over `httpx.AsyncClient`. Sync tools ran inside FastMCP's event loop, so one slow `yandex_gen_search` (up to minutes with retries) froze pings, cancellation and parallel calls.
+- `yandex_gen_search` is no longer re-sent after a read timeout or a dropped connection: the request may already have been processed and billed. Connection failures and 429/5xx are still retried.
+- `has_more` is computed from the group count in `<grouping>`, so it stays correct with `dedupe_by_domain=true`.
+- Unexpected server errors are logged with a traceback (stderr) instead of being silently wrapped.
+
+### Added
+
+- `yandex_gen_search`: `fix_typos` (typo correction can now be turned off), `url` scope, lists for `site`/`host`/`url` (API limits 5/5/10), `date`/`lang`/`doc_format` search filters. Response adds `search_queries`, `is_bullet_answer`, `problematic_answer`. Fields checked against the `GenSearchRequest` proto in `yandex-cloud/cloudapi`.
+- 429 honors `Retry-After`; if it exceeds 10 s the error is returned right away instead of retrying a spent quota.
+- Streamable HTTP transport: `YANDEX_MCP_TRANSPORT=http`, `YANDEX_MCP_HOST`, `YANDEX_MCP_PORT`.
+- `YANDEX_MCP_DISABLED_TOOLS` blacklist (comma or space separated, like the whitelist); `YANDEX_SEARCH_API_KEY_FILE` for Docker/K8s secrets.
+- `yandex-search-mcp` console script: runs via `uvx --from git+https://github.com/oleg-cat/yandex-search-mcp yandex-search-mcp`.
+- CI: Python 3.13 and a Docker build job. Tests: 49 → 67 (concurrency, gen retry policy, Retry-After, config, entry point, client surviving HTTP sessions).
+
 ## [0.1.0] — 2026-06-11
 
 ### Added
