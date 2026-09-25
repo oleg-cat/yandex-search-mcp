@@ -26,18 +26,18 @@ Self-hosted MCP-сервер для **Yandex Search API v2**: веб-поиск,
 
 Требуется Python ≥ 3.11.
 
-**Быстрее всего — без клонирования, через [uv](https://docs.astral.sh/uv/):**
+**Быстрее всего — из [PyPI](https://pypi.org/project/yandex-search-mcp/) через [uv](https://docs.astral.sh/uv/):**
 
 ```bash
-YANDEX_SEARCH_API_KEY=<key> YANDEX_FOLDER_ID=<folder> uvx --from git+https://github.com/oleg-cat/yandex-search-mcp yandex-search-mcp
+YANDEX_SEARCH_API_KEY=<key> YANDEX_FOLDER_ID=<folder> uvx yandex-search-mcp
 ```
 
-В клиенте: `claude mcp add yandex-search -e YANDEX_SEARCH_API_KEY=<key> -e YANDEX_FOLDER_ID=<folder> -- uvx --from git+https://github.com/oleg-cat/yandex-search-mcp yandex-search-mcp`.
+В клиенте: `claude mcp add yandex-search -e YANDEX_SEARCH_API_KEY=<key> -e YANDEX_FOLDER_ID=<folder> -- uvx yandex-search-mcp`. Или `pip install yandex-search-mcp`. Невыпущенный `main`: `uvx --from git+https://github.com/oleg-cat/yandex-search-mcp yandex-search-mcp`.
 
-**Обновление:** uvx кэширует сборку. Чтобы получить свежую версию, пересоберите её и выведите номер (сервер при этом не запускается), затем перезапустите MCP-клиент:
+**Обновление:** uvx кэширует пакет. Чтобы получить свежий релиз, обновите кэш и выведите номер версии (сервер при этом не запускается), затем перезапустите MCP-клиент:
 
 ```bash
-uvx --refresh --from git+https://github.com/oleg-cat/yandex-search-mcp yandex-search-mcp --version
+uvx --refresh yandex-search-mcp --version
 ```
 
 `yandex-search-mcp --help` — список всех переменных окружения.

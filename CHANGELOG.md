@@ -9,8 +9,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - `yandex-search-mcp --version` and `--help` (lists every environment variable). Both work without credentials and exit without starting the server.
 
+- Published to PyPI: `uvx yandex-search-mcp` / `pip install yandex-search-mcp`. A `Release` workflow publishes each GitHub Release via Trusted Publishing.
+
 ### Fixed
 
+- Packaging metadata uses an SPDX license expression (`license = "MIT"`); the deprecated license table and classifier are gone.
 - Unknown command-line arguments now fail with a usage error (exit code 2). Previously any argument, e.g. `--help`, was ignored and the STDIO server started, waiting for JSON in the terminal.
 
 ## [0.2.0] — 2026-09-25

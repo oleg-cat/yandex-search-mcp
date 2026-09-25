@@ -37,18 +37,18 @@ API docs: [Search API v2](https://yandex.cloud/en/docs/search-api/) · [REST ref
 
 Requires Python ≥ 3.11.
 
-**Fastest — no clone, via [uv](https://docs.astral.sh/uv/):**
+**Fastest — from [PyPI](https://pypi.org/project/yandex-search-mcp/) via [uv](https://docs.astral.sh/uv/):**
 
 ```bash
-YANDEX_SEARCH_API_KEY=<key> YANDEX_FOLDER_ID=<folder> uvx --from git+https://github.com/oleg-cat/yandex-search-mcp yandex-search-mcp
+YANDEX_SEARCH_API_KEY=<key> YANDEX_FOLDER_ID=<folder> uvx yandex-search-mcp
 ```
 
-With a client: `claude mcp add yandex-search -e YANDEX_SEARCH_API_KEY=<key> -e YANDEX_FOLDER_ID=<folder> -- uvx --from git+https://github.com/oleg-cat/yandex-search-mcp yandex-search-mcp`.
+With a client: `claude mcp add yandex-search -e YANDEX_SEARCH_API_KEY=<key> -e YANDEX_FOLDER_ID=<folder> -- uvx yandex-search-mcp`. Or `pip install yandex-search-mcp`. Unreleased `main`: `uvx --from git+https://github.com/oleg-cat/yandex-search-mcp yandex-search-mcp`.
 
-**Updating:** uvx caches the build. To pull the latest version, rebuild and print it (the server does not start), then restart your MCP client:
+**Updating:** uvx caches the package. To pull the latest release, refresh and print the version (the server does not start), then restart your MCP client:
 
 ```bash
-uvx --refresh --from git+https://github.com/oleg-cat/yandex-search-mcp yandex-search-mcp --version
+uvx --refresh yandex-search-mcp --version
 ```
 
 `yandex-search-mcp --help` lists every environment variable.
@@ -252,6 +252,10 @@ Implementation notes baked into the parser (verified against live API responses)
 - an empty result set arrives as `<error code="15">` inside the XML — the parser maps it to `results: []`, not an error;
 - typo corrections arrive as `<reask>` (not `<misspell>`);
 - `<found priority="...">` exists both at response level and inside groupings — only the response-level one is used.
+
+### Releasing
+
+Bump `version` in `pyproject.toml` and `__init__.py`, add a CHANGELOG entry, merge, then create a GitHub Release with tag `vX.Y.Z`. The `Release` workflow tests, builds and publishes to PyPI via Trusted Publishing (no tokens); it fails if the tag does not match the package version.
 
 ## License
 
